@@ -3,83 +3,68 @@
 namespace App\Http\Controllers;
 
 use App\Leave;
+use App\LeaveType;
 use Illuminate\Http\Request;
 
 class LeaveController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $leaveTypes = LeaveType::all();
+        $leaves = Leave::where('emp_id', auth('employee')->id())->orderBy('id', 'desc')->get();
+
+        $view = auth('employee')->check() ? 'employee-leavelist' : 'admin.leave-list';
+
+        return view($view, compact('leaveTypes', 'leaves'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'leaveType' => 'required',
+            'dateFrom' => 'required',
+            'dateTo' => 'required',
+            'details' => 'required',
+        ]);
+
+        $type = new Leave();
+        $type->emp_id = auth('employee')->id();
+        $type->type_id = $request->leaveType;
+        $type->date_from = $request->dateFrom;
+        $type->date_to = $request->dateTo;
+        $type->total_days = date_diff(date_create($request->dateFrom),date_create($request->dateTo))->format("%a");
+        $type->details = $request->details;
+        $type->save();
+
+        return $type;
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Leave  $leave
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Leave $leave)
+    public function edit(Leave $leaveType)
     {
-        //
+        return $leaveType;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Leave  $leave
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Leave $leave)
+    public function update(Request $request, Leave $leaveType)
     {
-        //
+        $this->validate($request, [
+            'typeName' => 'required|unique:leave_types,type_name,'.$leaveType->id,
+            'totalDays' => 'required|digits_between:1,50'
+        ]);
+
+        $leaveType->type_name = $request->typeName;
+        $leaveType->type_details = $request->typeDetails;
+        $leaveType->total_days = $request->totalDays;
+        $leaveType->save();
+
+        return $leaveType;
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Leave  $leave
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Leave $leave)
+    public function destroy(Leave $leaveType)
     {
-        //
-    }
+        $status = $leaveType->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Leave  $leave
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Leave $leave)
-    {
-        //
+        if ($status) return 'ok';
+
     }
 }

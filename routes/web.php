@@ -14,7 +14,7 @@ Route::prefix('admin')->name('admin.')->group(function (){
         Route::resource('departments', 'Admin\DepartmentController')->except(['create', 'show']);
         Route::resource('admins', 'Admin\AdminController')->except(['create', 'show']);
         Route::resource('employees', 'Admin\EmployeeController')->except(['create', 'show']);
-
+        Route::resource('leave-types', 'Admin\LeaveTypeController')->except(['create', 'show']);
     });
 
 });
@@ -30,6 +30,7 @@ Route::prefix('employee')->name('employee.')->group(function (){
     Route::middleware(['auth:employee'])->group(function (){
 
         Route::get('/dashboard', 'Employee\DashboardController@index')->name('dashboard');
+        Route::resource('/leaves', 'LeaveController');
 
     });
 

@@ -37,8 +37,13 @@ class DepartmentController extends Controller
         return $department;
     }
 
-    public function update(Request $request, Department $department)
+    public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'departmentName' => 'required|unique:departments,dept_name'
+        ]);
+
+        $department = Department::find($id);
         $department->dept_name = $request->departmentName;
         $department->dept_details = $request->departmentDetails;
         $department->save();

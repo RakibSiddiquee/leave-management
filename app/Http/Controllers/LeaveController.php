@@ -11,7 +11,7 @@ class LeaveController extends Controller
     public function index()
     {
         $leaveTypes = LeaveType::all();
-        $leaves = Leave::where('emp_id', auth('employee')->id())->orderBy('id', 'desc')->get();
+        $leaves = Leave::with('type')->where('emp_id', auth('employee')->id())->orderBy('id', 'desc')->get();
 
         $view = auth('employee')->check() ? 'employee-leavelist' : 'admin.leave-list';
 
@@ -27,42 +27,50 @@ class LeaveController extends Controller
             'details' => 'required',
         ]);
 
-        $type = new Leave();
-        $type->emp_id = auth('employee')->id();
-        $type->type_id = $request->leaveType;
-        $type->date_from = $request->dateFrom;
-        $type->date_to = $request->dateTo;
-        $type->total_days = date_diff(date_create($request->dateFrom),date_create($request->dateTo))->format("%a");
-        $type->details = $request->details;
-        $type->save();
+        $leave = new Leave();
+        $leave->emp_id = auth('employee')->id();
+        $leave->type_id = $request->leaveType;
+        $leave->date_from = $request->dateFrom;
+        $leave->date_to = $request->dateTo;
+        $leave->total_days = date_diff(date_create($request->dateFrom),date_create($request->dateTo))->format("%a")+1;
+        $leave->details = $request->details;
+        $leave->save();
 
-        return $type;
+        return $leave;
 
     }
 
-    public function edit(Leave $leaveType)
+    public function edit($id)
     {
-        return $leaveType;
+        $leave = Leave::find($id);
+        return $leave;
     }
 
-    public function update(Request $request, Leave $leaveType)
+    public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'typeName' => 'required|unique:leave_types,type_name,'.$leaveType->id,
-            'totalDays' => 'required|digits_between:1,50'
+            'leaveType' => 'required',
+            'dateFrom' => 'required',
+            'dateTo' => 'required',
+            'details' => 'required',
         ]);
 
-        $leaveType->type_name = $request->typeName;
-        $leaveType->type_details = $request->typeDetails;
-        $leaveType->total_days = $request->totalDays;
-        $leaveType->save();
+        $leave = Leave::find($id);
+        $leave->emp_id = auth('employee')->id();
+        $leave->type_id = $request->leaveType;
+        $leave->date_from = $request->dateFrom;
+        $leave->date_to = $request->dateTo;
+        $leave->total_days = date_diff(date_create($request->dateFrom),date_create($request->dateTo))->format("%a")+1;
+        $leave->details = $request->details;
+        $leave->save();
 
-        return $leaveType;
+        return $leave;
     }
 
-    public function destroy(Leave $leaveType)
+    public function destroy($id)
     {
-        $status = $leaveType->delete();
+        $leave = Leave::find($id);
+        $status = $leave->delete();
 
         if ($status) return 'ok';
 

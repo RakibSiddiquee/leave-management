@@ -36,8 +36,13 @@ class DesignationController extends Controller
         return $designation;
     }
 
-    public function update(Request $request, Designation $designation)
+    public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'designationName' => 'required|unique:designations,desg_name'
+        ]);
+
+        $designation = Designation::find($id);
         $designation->desg_name = $request->designationName;
         $designation->desg_details = $request->designationDetails;
         $designation->save();

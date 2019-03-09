@@ -43,11 +43,11 @@
 
                             <tr v-for="(leave,index) in leaves" :key="leave.id">
                                 <td>{{ index+1 }}</td>
-                                <td>{{ leave.type_id }}</td>
+                                <td>{{ leave.type.type_name }}</td>
                                 <td>{{ leave.date_from }}</td>
                                 <td>{{ leave.date_to }}</td>
                                 <td>{{ leave.total_days }}</td>
-                                <td>{{ leave.status }}</td>
+                                <td>{{ leave.status }} <i class="fa fa-check"></i> </td>
                                 <td>
                                     <a class="btn btn-warning btn-xs" @click="editLeave(leave.id)">
                                         <i class="fa fa-pencil"></i>
@@ -104,7 +104,7 @@
                                 <div class="form-group">
                                     <label for="totalDays" class="col-sm-3 control-label">Total Days</label>
                                     <div class="col-sm-8">
-                                        <span type="text" id="totalDays" class="form-control">10</span>
+                                        <span type="text" id="totalDays" class="form-control">{{ dateFrom && dateTo ? Math.ceil(Math.abs(new Date(dateTo).getTime() - new Date(dateFrom).getTime())/86400000)+1 : 0 }}</span>
                                     </div>
                                 </div>
 
@@ -170,6 +170,7 @@
             },
 
             addLeave(){
+
                 axios.post(process.env.MIX_APP_URL+'employee/leaves',{
 
                     leaveType: this.leaveType,
@@ -200,13 +201,11 @@
                     this.errors = [];
                     this.successMsg = '';
                     this.id = response.data.id;
-                    this.name = response.data.name;
-                    this.designation = response.data.desg_id;
-                    this.department = response.data.dept_id;
-                    this.username = response.data.username;
-                    this.contactNumber = response.data.phone;
-                    this.email = response.data.email;
-                    this.address = response.data.address;
+                    this.leaveType = response.data.type_id;
+                    this.dateFrom = response.data.date_from;
+                    this.dateTo = response.data.date_to;
+                    this.totalDays = response.data.total_days;
+                    this.details = response.data.details;
                 }).catch(error => {
                     console.error(error)
                 });
@@ -214,20 +213,17 @@
 
             updateLeave(id){
                 axios.put(process.env.MIX_APP_URL+'employee/leaves/'+id,{
-                    name: this.name,
-                    designation: this.designation,
-                    department: this.department,
-                    username: this.username,
-                    contactNumber: this.contactNumber,
-                    email: this.email,
-                    address: this.address,
-                    status: this.status,
+                    leaveType: this.leaveType,
+                    dateFrom: this.dateFrom,
+                    dateTo: this.dateTo,
+                    totalDays: this.totalDays,
+                    details: this.details
                 }).then(response => {
                     this.showModal=false;
                     this.$set(this.leaves, this.leaves.indexOf(this.leaves.filter(function (item) {
                         return item.id == id;
                     })[0]), response.data);
-                    this.name = this.designation = this.department = this.username = this.contactNumber = this.email = this.password = this.password_confirmation = this.address = this.status = '';
+                    this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
                     this.successMsg = 'Leave has been updated successfully!';
                 }).catch(e => {
                     if (e.response.status == 422){
@@ -258,7 +254,7 @@
 
 
         mounted(){
-            console.log('Leave mounted!', process.env.MIX_APP_URL);
+            console.log('Leave mounted!', this.leaves);
         }
     }
 </script>

@@ -22,16 +22,6 @@ class EmployeeController extends Controller
         return view('admin.employee-list', compact('designations', 'departments', 'employees'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
         $this->validate($request, [
@@ -91,12 +81,6 @@ class EmployeeController extends Controller
         return $employee;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Employee  $employee
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Employee $employee)
     {
         $status = $employee->delete();

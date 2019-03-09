@@ -1962,13 +1962,11 @@ __webpack_require__.r(__webpack_exports__);
         _this2.errors = [];
         _this2.successMsg = '';
         _this2.id = response.data.id;
-        _this2.name = response.data.name;
-        _this2.designation = response.data.desg_id;
-        _this2.department = response.data.dept_id;
-        _this2.username = response.data.username;
-        _this2.contactNumber = response.data.phone;
-        _this2.email = response.data.email;
-        _this2.address = response.data.address;
+        _this2.leaveType = response.data.type_id;
+        _this2.dateFrom = response.data.date_from;
+        _this2.dateTo = response.data.date_to;
+        _this2.totalDays = response.data.total_days;
+        _this2.details = response.data.details;
       }).catch(function (error) {
         console.error(error);
       });
@@ -1977,14 +1975,11 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       axios.put("http://localhost:9000/axil/public/" + 'employee/leaves/' + id, {
-        name: this.name,
-        designation: this.designation,
-        department: this.department,
-        username: this.username,
-        contactNumber: this.contactNumber,
-        email: this.email,
-        address: this.address,
-        status: this.status
+        leaveType: this.leaveType,
+        dateFrom: this.dateFrom,
+        dateTo: this.dateTo,
+        totalDays: this.totalDays,
+        details: this.details
       }).then(function (response) {
         _this3.showModal = false;
 
@@ -1992,7 +1987,7 @@ __webpack_require__.r(__webpack_exports__);
           return item.id == id;
         })[0]), response.data);
 
-        _this3.name = _this3.designation = _this3.department = _this3.username = _this3.contactNumber = _this3.email = _this3.password = _this3.password_confirmation = _this3.address = _this3.status = '';
+        _this3.leaveType = _this3.dateFrom = _this3.dateTo = _this3.totalDays = _this3.details = '';
         _this3.successMsg = 'Leave has been updated successfully!';
       }).catch(function (e) {
         if (e.response.status == 422) {
@@ -2021,7 +2016,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
-    console.log('Leave mounted!', "http://localhost:9000/axil/public/");
+    console.log('Leave mounted!', this.leaves);
   }
 });
 
@@ -38391,7 +38386,7 @@ var render = function() {
                   return _c("tr", { key: leave.id }, [
                     _c("td", [_vm._v(_vm._s(index + 1))]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(leave.type_id))]),
+                    _c("td", [_vm._v(_vm._s(leave.type.type_name))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(leave.date_from))]),
                     _vm._v(" "),
@@ -38399,7 +38394,10 @@ var render = function() {
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(leave.total_days))]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(leave.status))]),
+                    _c("td", [
+                      _vm._v(_vm._s(leave.status) + " "),
+                      _c("i", { staticClass: "fa fa-check" })
+                    ]),
                     _vm._v(" "),
                     _c("td", [
                       _c(
@@ -38616,7 +38614,40 @@ var render = function() {
                       ])
                     ]),
                     _vm._v(" "),
-                    _vm._m(5),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-3 control-label",
+                          attrs: { for: "totalDays" }
+                        },
+                        [_vm._v("Total Days")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-8" }, [
+                        _c(
+                          "span",
+                          {
+                            staticClass: "form-control",
+                            attrs: { type: "text", id: "totalDays" }
+                          },
+                          [
+                            _vm._v(
+                              _vm._s(
+                                _vm.dateFrom && _vm.dateTo
+                                  ? Math.ceil(
+                                      Math.abs(
+                                        new Date(_vm.dateTo).getTime() -
+                                          new Date(_vm.dateFrom).getTime()
+                                      ) / 86400000
+                                    ) + 1
+                                  : 0
+                              )
+                            )
+                          ]
+                        )
+                      ])
+                    ]),
                     _vm._v(" "),
                     _c("div", { staticClass: "form-group" }, [
                       _c(
@@ -38810,29 +38841,6 @@ var staticRenderFns = [
         _c("span", { staticClass: "required" }, [_vm._v("*")])
       ]
     )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-group" }, [
-      _c(
-        "label",
-        { staticClass: "col-sm-3 control-label", attrs: { for: "totalDays" } },
-        [_vm._v("Total Days")]
-      ),
-      _vm._v(" "),
-      _c("div", { staticClass: "col-sm-8" }, [
-        _c(
-          "span",
-          {
-            staticClass: "form-control",
-            attrs: { type: "text", id: "totalDays" }
-          },
-          [_vm._v("10")]
-        )
-      ])
-    ])
   }
 ]
 render._withStripped = true

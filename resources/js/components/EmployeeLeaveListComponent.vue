@@ -50,10 +50,11 @@
                                 <td>{{ leave.status }} <i class="fa fa-check"></i> </td>
                                 <td>
                                     <a class="btn btn-warning btn-xs" @click="editLeave(leave.id)">
+
                                         <i class="fa fa-pencil"></i>
                                     </a>
-                                    <a class="btn btn-danger btn-xs" @click="deleteLeave(leave.id)">
-                                        <i class="fa fa-times"></i>
+                                    <a class="btn btn-success btn-xs" @click="deleteLeave(leave.id)">
+                                        <i class="fa fa-eye"></i>
                                     </a>
                                 </td>
                             </tr>
@@ -219,6 +220,7 @@
                     totalDays: this.totalDays,
                     details: this.details
                 }).then(response => {
+                    console.log(response.data);
                     this.showModal=false;
                     this.$set(this.leaves, this.leaves.indexOf(this.leaves.filter(function (item) {
                         return item.id == id;

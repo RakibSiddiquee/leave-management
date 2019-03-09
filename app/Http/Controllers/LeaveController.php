@@ -55,7 +55,7 @@ class LeaveController extends Controller
             'details' => 'required',
         ]);
 
-        $leave = Leave::find($id);
+        $leave = Leave::with('type')->find($id);
         $leave->emp_id = auth('employee')->id();
         $leave->type_id = $request->leaveType;
         $leave->date_from = $request->dateFrom;

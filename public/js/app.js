@@ -1902,6 +1902,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['lvs', 'leaveTypes'],
   data: function data() {
@@ -1981,6 +1982,7 @@ __webpack_require__.r(__webpack_exports__);
         totalDays: this.totalDays,
         details: this.details
       }).then(function (response) {
+        console.log(response.data);
         _this3.showModal = false;
 
         _this3.$set(_this3.leaves, _this3.leaves.indexOf(_this3.leaves.filter(function (item) {
@@ -38416,14 +38418,14 @@ var render = function() {
                       _c(
                         "a",
                         {
-                          staticClass: "btn btn-danger btn-xs",
+                          staticClass: "btn btn-success btn-xs",
                           on: {
                             click: function($event) {
                               return _vm.deleteLeave(leave.id)
                             }
                           }
                         },
-                        [_c("i", { staticClass: "fa fa-times" })]
+                        [_c("i", { staticClass: "fa fa-eye" })]
                       )
                     ])
                   ])

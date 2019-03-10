@@ -1,6 +1,6 @@
 <template>
     <div>
-    <!-- Content Header (Page header) -->
+        <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1>Leave</h1>
 
@@ -23,7 +23,7 @@
                                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                                 <strong>Success!</strong> {{ successMsg }}
                             </div>
-                            <!--<a class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#deptModal" @click="showLeaveModal"><i class="fa fa-plus"></i></a>-->
+                            <!--<a class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#leaveModal" @click="showLeaveModal"><i class="fa fa-plus"></i></a>-->
                             <a class="btn btn-primary btn-sm pull-right" @click="showLeaveModal"><i class="fa fa-plus"></i></a>
                         </div>
                         <!-- /.box-header -->
@@ -31,27 +31,35 @@
                             <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Name</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Address</th>
+                                <th>Leave Type</th>
+                                <th>Date From</th>
+                                <th>Date To</th>
+                                <th>Total Days</th>
+                                <th>status</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
 
-                            <tr v-for="(employee,index) in employees" :key="employee.id">
+                            <tr v-for="(leave,index) in leaves" :key="leave.id">
                                 <td>{{ index+1 }}</td>
-                                <td>{{ employee.name }}</td>
-                                <td>{{ employee.username }}</td>
-                                <td>{{ employee.email }}</td>
-                                <td>{{ employee.address }}</td>
+                                <td>{{ leave.type ? leave.type.type_name : '' }}</td>
+                                <td>{{ fFormatDate(leave.date_from) }}</td>
+                                <td>{{ fFormatDate(leave.date_to) }}</td>
+                                <td>{{ leave.total_days }}</td>
+                                <td>{{ leave.status == 1 ? 'Approved' : (leave.status == 2 ? 'Rejected' : 'Pending') }}</td>
                                 <td>
-                                    <a class="btn btn-warning btn-xs" @click="editLeave(employee.id)">
+                                    <a class="btn btn-warning btn-xs" @click="editLeave(leave.id)">
                                         <i class="fa fa-pencil"></i>
                                     </a>
-                                    <a class="btn btn-danger btn-xs" @click="deleteLeave(employee.id)">
-                                        <i class="fa fa-times"></i>
+                                    <a class="btn btn-success btn-xs" @click="showLeave(leave.id)">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a @click="statusChange(leave.id,1)" class="btn btn-primary btn-xs">
+                                        Approve
+                                    </a>
+                                    <a @click="statusChange(leave.id,2)" class="btn btn-danger btn-xs">
+                                        Reject
                                     </a>
                                 </td>
                             </tr>
@@ -63,95 +71,59 @@
             <!-- /.row -->
 
             <!-- Add Leave modal -->
-            <div class="modal fade" :class="{ 'in show': showModal }" id="deptModal" role="dialog">
+            <div class="modal fade" :class="{ 'in show': showModal }" id="leaveModal" role="dialog">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" @click="showModal=false">&times;</button>
-                            <h4 class="modal-title">Add Leave</h4>
+                            <h4 class="modal-title">Request Leave</h4>
                         </div>
                         <div class="modal-body">
                             <form @submit.prevent="onSubmit" method="post" enctype="multipart/form-data" class="form-horizontal">
                                 <div class="form-group">
-                                    <label for="name" class="col-sm-3 control-label">Name <span class="required">*</span></label>
+                                    <label for="leaveType" class="col-sm-3 control-label">Leave Type <span class="required">*</span></label>
                                     <div class="col-sm-8">
-                                        <input type="text" name="name" v-model="name" class="form-control" id="name" placeholder="Leave Name">
-                                        <span v-if="errors.length && errors[0].name" class="text-danger">{{ errors[0].name[0] }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="designation" class="col-sm-3 control-label">Designation <span class="required">*</span></label>
-                                    <div class="col-sm-8">
-                                        <select name="designation" v-model="designation" class="form-control" id="designation">
-                                            <option value="">--Choose designation--</option>
-                                            <option v-for="designation in designations" :value="designation.id" :key="designation.id">{{ designation.desg_name }}</option>
+                                        <select name="leaveType" v-model="leaveType" class="form-control" id="leaveType">
+                                            <option value="">--Choose Leave Type--</option>
+                                            <option v-for="type in types" :value="type.id" :key="type.id">{{ type.type_name }}</option>
                                         </select>
-                                        <span v-if="errors.length && errors[0].designation" class="text-danger">{{ errors[0].designation[0] }}</span>
+                                        <span v-if="errors.length && errors[0].leaveType" class="text-danger">{{ errors[0].leaveType[0] }}</span>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="department" class="col-sm-3 control-label">Department <span class="required">*</span></label>
+                                    <label for="dateFrom" class="col-sm-3 control-label">Date From <span class="required">*</span></label>
                                     <div class="col-sm-8">
-                                        <select name="department" v-model="department" class="form-control" id="department">
-                                            <option value="">--Choose department--</option>
-                                            <option v-for="department in departments" :value="department.id" :key="department.id"">{{ department.dept_name }}</option>
-                                        </select>
-                                        <span v-if="errors.length && errors[0].department" class="text-danger">{{ errors[0].department[0] }}</span>
+                                        <input type="date" name="dateFrom" v-model="dateFrom" class="form-control" id="dateFrom" placeholder="Date From">
+                                        <span v-if="errors.length && errors[0].dateFrom" class="text-danger">{{ errors[0].dateFrom[0] }}</span>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="username" class="col-sm-3 control-label">Username <span class="required">*</span></label>
+                                    <label for="dateTo" class="col-sm-3 control-label">Date To <span class="required">*</span></label>
                                     <div class="col-sm-8">
-                                        <input type="text" name="username" v-model="username" class="form-control" id="username" placeholder="Leave Username">
-                                        <span v-if="errors.length && errors[0].username" class="text-danger">{{ errors[0].username[0] }}</span>
+                                        <input type="date" name="dateTo" v-model="dateTo" class="form-control" id="dateTo" placeholder="Date To">
+                                        <span v-if="errors.length && errors[0].dateTo" class="text-danger">{{ errors[0].dateTo[0] }}</span>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="contactNumber" class="col-sm-3 control-label">Contact Number <span class="required">*</span></label>
+                                    <label for="totalDays" class="col-sm-3 control-label">Total Days</label>
                                     <div class="col-sm-8">
-                                        <input type="text" name="contactNumber" v-model="contactNumber" class="form-control" id="contactNumber" placeholder="Leave Contact Number">
-                                        <span v-if="errors.length && errors[0].contactNumber" class="text-danger">{{ errors[0].contactNumber[0] }}</span>
+                                        <span type="text" id="totalDays" class="form-control">{{ dateFrom && dateTo ? Math.ceil(Math.abs(new Date(dateTo).getTime() - new Date(dateFrom).getTime())/86400000)+1 : 0 }}</span>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="email" class="col-sm-3 control-label">Email <span class="required">*</span></label>
+                                    <label for="details" class="col-sm-3 control-label">Details</label>
                                     <div class="col-sm-8">
-                                        <input type="email" name="email" v-model="email" class="form-control" id="email" placeholder="Leave email">
-                                        <span v-if="errors.length && errors[0].email" class="text-danger">{{ errors[0].email[0] }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="form-group" v-if="!updateBtn">
-                                    <label for="password" class="col-sm-3 control-label">Password <span class="required">*</span></label>
-                                    <div class="col-sm-8">
-                                        <input type="password" name="password" v-model="password" class="form-control" id="password" placeholder="Password">
-                                        <span v-if="errors.length && errors[0].password" class="text-danger">{{ errors[0].password[0] }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="form-group" v-if="!updateBtn">
-                                    <label for="confirm_password" class="col-sm-3 control-label">Confirm Password <span class="required">*</span></label>
-                                    <div class="col-sm-8">
-                                        <input type="password" name="password_confirmation" v-model="password_confirmation" class="form-control" id="confirm_password" placeholder="Confirm Password">
-                                        <span v-if="errors.length && errors[0].confirm_password" class="text-danger">{{ errors[0].confirm_password[0] }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="address" class="col-sm-3 control-label">Address</label>
-                                    <div class="col-sm-8">
-                                        <textarea name="address" v-model="address" id="address" class="form-control" placeholder="Leave Address"></textarea>
+                                        <textarea name="details" v-model="details" id="details" class="form-control" placeholder="Leave Details" rows="10"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-sm-offset-3 col-sm-8">
-                                        <button type="button" v-if="updateBtn" @click="updateLeave(id)" class="btn btn-info" data-dismiss="modal">Update</button>
+                                        <button type="button" v-if="updateBtn" @click="updateLeave(id,empId)" class="btn btn-info" data-dismiss="modal">Update</button>
                                         <button type="button" v-else @click="addLeave()" class="btn btn-info"  data-dismiss="modal">Submit</button>
                                         <button type="reset" class="btn btn-default">Clear</button>
                                     </div>
@@ -165,38 +137,63 @@
                 </div>
             </div>
 
+            <!--Show Leave Modal-->
+            <div class="modal fade" :class="{ 'in show': showLeaveDetailsModal }" id="showLeaveDetailsModal" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" @click="showLeaveDetailsModal=false">&times;</button>
+                            <h4 class="modal-title">{{ leaveDetails.type ? leaveDetails.type.type_name : '' }}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <p class="col-sm-3">Date :</p>
+                                <p class="col-sm-8">{{ fFormatDate(leaveDetails.date_from) +' - '+ fFormatDate(leaveDetails.date_to) }} ({{ leaveDetails.total_days + (leaveDetails.total_days > 1 ? ' days' : ' day') }})</p>
+                            </div>
+                            <div class="row">
+                                <p class="col-sm-3">Status :</p>
+                                <p class="col-sm-8">{{ leaveDetails.status ? 'Approved' : 'Pending' }}</p>
+                            </div>
+                            <div class="row">
+                                <p class="col-sm-3">Details :</p>
+                                <p class="col-sm-8">{{ leaveDetails.details}}</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" @click="showLeaveDetailsModal=false">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </section>
 
-    <!-- /.content -->
+        <!-- /.content -->
     </div>
 </template>
 
 <script>
     export default {
 
-        props: ['desgs', 'depts', 'empls'],
+        props: ['lvs', 'leaveTypes'],
 
         data(){
             return {
-                designations: this.desgs,
-                departments: this.depts,
-                employees: this.empls,
+                types: this.leaveTypes,
+                leaves: this.lvs,
+                leaveDetails: '',
                 showModal: false,
+                showLeaveDetailsModal: false,
                 id: '',
+                empId: '',
                 errors: [],
                 successMsg: '',
                 updateBtn: false,
-                name: '',
-                designation: '',
-                department: '',
-                username: '',
-                contactNumber: '',
-                email: '',
-                password: '',
-                password_confirmation: '',
-                address: '',
-                status: '',
-
+                leaveType: '',
+                dateFrom: '',
+                dateTo: '',
+                totalDays: '',
+                details: '',
             }
         },
 
@@ -207,26 +204,27 @@
                 this.updateBtn = false;
                 this.errors = [];
                 this.successMsg = '';
-                this.name = this.designation = this.department = this.username = this.contactNumber = this.email = this.password = this.password_confirmation = this.address = this.status = '';
+                this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
             },
 
             addLeave(){
-                axios.post(process.env.MIX_APP_URL+'admin/employees',{
-                    name: this.name,
-                    designation: this.designation,
-                    department: this.department,
-                    username: this.username,
-                    contactNumber: this.contactNumber,
-                    email: this.email,
-                    password: this.password,
-                    password_confirmation: this.password_confirmation,
-                    address: this.address,
-                    status: this.status,
+
+                axios.post(process.env.MIX_APP_URL+'admin/leaves',{
+
+                    leaveType: this.leaveType,
+                    dateFrom: this.dateFrom,
+                    dateTo: this.dateTo,
+                    totalDays: this.totalDays,
+                    details: this.details
+
                 }).then(response => {
                     this.showModal=false;
-                    this.employees.push(response.data);
-                    this.name = this.designation = this.department = this.username = this.email = this.password = this.password_confirmation = this.address = this.status = '';
-                    this.successMsg = 'Leave has been added successfully!';
+                    if (response.data){
+                        this.leaves.push(response.data);
+                        this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
+                        this.successMsg = 'Leave has been added successfully!';
+                    }
+
                 }).catch(e => {
                     if (e.response.status == 422){
                         this.errors = [];
@@ -237,40 +235,38 @@
             },
 
             editLeave(id){
-                axios.get(process.env.MIX_APP_URL+'admin/employees/'+id+'/edit').then(response => {
+                axios.get(process.env.MIX_APP_URL+'admin/leaves/'+id+'/edit').then(response => {
                     this.showModal = true;
                     this.updateBtn = true;
                     this.errors = [];
                     this.successMsg = '';
                     this.id = response.data.id;
-                    this.name = response.data.name;
-                    this.designation = response.data.desg_id;
-                    this.department = response.data.dept_id;
-                    this.username = response.data.username;
-                    this.contactNumber = response.data.phone;
-                    this.email = response.data.email;
-                    this.address = response.data.address;
+                    this.empId = response.data.emp_id;
+                    this.leaveType = response.data.type_id;
+                    this.dateFrom = response.data.date_from;
+                    this.dateTo = response.data.date_to;
+                    this.totalDays = response.data.total_days;
+                    this.details = response.data.details;
                 }).catch(error => {
                     console.error(error)
                 });
             },
 
-            updateLeave(id){
-                axios.put(process.env.MIX_APP_URL+'admin/employees/'+id,{
-                    name: this.name,
-                    designation: this.designation,
-                    department: this.department,
-                    username: this.username,
-                    contactNumber: this.contactNumber,
-                    email: this.email,
-                    address: this.address,
-                    status: this.status,
+            updateLeave(id,empId){
+                axios.put(process.env.MIX_APP_URL+'admin/leaves/'+id,{
+                    empId: empId,
+                    leaveType: this.leaveType,
+                    dateFrom: this.dateFrom,
+                    dateTo: this.dateTo,
+                    totalDays: this.totalDays,
+                    details: this.details
                 }).then(response => {
+                    console.log(response.data);
                     this.showModal=false;
-                    this.$set(this.employees, this.employees.indexOf(this.employees.filter(function (item) {
+                    this.$set(this.leaves, this.leaves.indexOf(this.leaves.filter(function (item) {
                         return item.id == id;
                     })[0]), response.data);
-                    this.name = this.designation = this.department = this.username = this.contactNumber = this.email = this.password = this.password_confirmation = this.address = this.status = '';
+                    this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
                     this.successMsg = 'Leave has been updated successfully!';
                 }).catch(e => {
                     if (e.response.status == 422){
@@ -280,28 +276,42 @@
                 });
             },
 
-            deleteLeave(id){
-                if (confirm("Do you want to delete the employee?")){
-                    axios.delete(process.env.MIX_APP_URL+'admin/employees/'+id).then(response => {
-                        if (response.status == 200){
-                            this.$delete(this.employees, this.employees.indexOf(this.employees.filter(function (item) {
-                                return item.id == id;
-                            })[0]));
-                            this.successMsg = 'Leave has been deleted successfully!';
+            showLeave(id){
+                axios.get(process.env.MIX_APP_URL+'admin/leaves/'+id).then(response => {
+                    this.showLeaveDetailsModal = true;
+                    this.leaveDetails = response.data;
+                }).catch(error => {
+                    console.error(error)
+                });
 
+            },
+
+            statusChange(id,sts){
+                console.log(id,sts);
+                if (confirm("Do you want to "+(sts==1?'approve':'reject')+" the leave?")) {
+                    axios.post(process.env.MIX_APP_URL + 'admin/leaves/change-status', {
+                        id: id,
+                        status: sts,
+                    }).then(response => {
+                        this.$set(this.leaves, this.leaves.indexOf(this.leaves.filter(function (item) {
+                            return item.id == id;
+                        })[0]), response.data);
+//                    console.log(response);
+                        this.successMsg = 'Leave has been '+(response.data.status==1?'Approved':'Rejected')+' successfully!';
+                    }).catch(e => {
+                        if (e.response.status == 422) {
+                            console.log(e);
                         }
-                    }).catch(error => {
-                        console.log(error);
                     });
                 }
+            },
 
-            }
 
         },
 
 
         mounted(){
-            console.log('Leave mounted!', process.env.MIX_APP_URL);
+            console.log('Leave mounted!', this.leaves);
         }
     }
 </script>

@@ -1754,6 +1754,332 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Admin/LeaveListComponent.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Admin/LeaveListComponent.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['lvs', 'leaveTypes'],
+  data: function data() {
+    return {
+      types: this.leaveTypes,
+      leaves: this.lvs,
+      leaveDetails: '',
+      showModal: false,
+      showLeaveDetailsModal: false,
+      id: '',
+      empId: '',
+      errors: [],
+      successMsg: '',
+      updateBtn: false,
+      leaveType: '',
+      dateFrom: '',
+      dateTo: '',
+      totalDays: '',
+      details: ''
+    };
+  },
+  methods: {
+    showLeaveModal: function showLeaveModal() {
+      this.showModal = true;
+      this.updateBtn = false;
+      this.errors = [];
+      this.successMsg = '';
+      this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
+    },
+    addLeave: function addLeave() {
+      var _this = this;
+
+      axios.post("http://localhost:9000/axil/public/" + 'admin/leaves', {
+        leaveType: this.leaveType,
+        dateFrom: this.dateFrom,
+        dateTo: this.dateTo,
+        totalDays: this.totalDays,
+        details: this.details
+      }).then(function (response) {
+        _this.showModal = false;
+
+        if (response.data) {
+          _this.leaves.push(response.data);
+
+          _this.leaveType = _this.dateFrom = _this.dateTo = _this.totalDays = _this.details = '';
+          _this.successMsg = 'Leave has been added successfully!';
+        }
+      }).catch(function (e) {
+        if (e.response.status == 422) {
+          _this.errors = [];
+
+          _this.errors.push(e.response.data.errors);
+        }
+      });
+    },
+    editLeave: function editLeave(id) {
+      var _this2 = this;
+
+      axios.get("http://localhost:9000/axil/public/" + 'admin/leaves/' + id + '/edit').then(function (response) {
+        _this2.showModal = true;
+        _this2.updateBtn = true;
+        _this2.errors = [];
+        _this2.successMsg = '';
+        _this2.id = response.data.id;
+        _this2.empId = response.data.emp_id;
+        _this2.leaveType = response.data.type_id;
+        _this2.dateFrom = response.data.date_from;
+        _this2.dateTo = response.data.date_to;
+        _this2.totalDays = response.data.total_days;
+        _this2.details = response.data.details;
+      }).catch(function (error) {
+        console.error(error);
+      });
+    },
+    updateLeave: function updateLeave(id, empId) {
+      var _this3 = this;
+
+      axios.put("http://localhost:9000/axil/public/" + 'admin/leaves/' + id, {
+        empId: empId,
+        leaveType: this.leaveType,
+        dateFrom: this.dateFrom,
+        dateTo: this.dateTo,
+        totalDays: this.totalDays,
+        details: this.details
+      }).then(function (response) {
+        console.log(response.data);
+        _this3.showModal = false;
+
+        _this3.$set(_this3.leaves, _this3.leaves.indexOf(_this3.leaves.filter(function (item) {
+          return item.id == id;
+        })[0]), response.data);
+
+        _this3.leaveType = _this3.dateFrom = _this3.dateTo = _this3.totalDays = _this3.details = '';
+        _this3.successMsg = 'Leave has been updated successfully!';
+      }).catch(function (e) {
+        if (e.response.status == 422) {
+          _this3.errors = [];
+
+          _this3.errors.push(e.response.data.errors);
+        }
+      });
+    },
+    showLeave: function showLeave(id) {
+      var _this4 = this;
+
+      axios.get("http://localhost:9000/axil/public/" + 'admin/leaves/' + id).then(function (response) {
+        _this4.showLeaveDetailsModal = true;
+        _this4.leaveDetails = response.data;
+      }).catch(function (error) {
+        console.error(error);
+      });
+    },
+    statusChange: function statusChange(id, sts) {
+      var _this5 = this;
+
+      console.log(id, sts);
+
+      if (confirm("Do you want to " + (sts == 1 ? 'approve' : 'reject') + " the leave?")) {
+        axios.post("http://localhost:9000/axil/public/" + 'admin/leaves/change-status', {
+          id: id,
+          status: sts
+        }).then(function (response) {
+          _this5.$set(_this5.leaves, _this5.leaves.indexOf(_this5.leaves.filter(function (item) {
+            return item.id == id;
+          })[0]), response.data); //                    console.log(response);
+
+
+          _this5.successMsg = 'Leave has been ' + (response.data.status == 1 ? 'Approved' : 'Rejected') + ' successfully!';
+        }).catch(function (e) {
+          if (e.response.status == 422) {
+            console.log(e);
+          }
+        });
+      }
+    }
+  },
+  mounted: function mounted() {
+    console.log('Leave mounted!', this.leaves);
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EmployeeLeaveListComponent.vue?vue&type=script&lang=js&":
 /*!*************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/EmployeeLeaveListComponent.vue?vue&type=script&lang=js& ***!
@@ -1763,7 +2089,6 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-//
 //
 //
 //
@@ -1944,7 +2269,6 @@ __webpack_require__.r(__webpack_exports__);
       id: '',
       errors: [],
       successMsg: '',
-      updateBtn: false,
       leaveType: '',
       dateFrom: '',
       dateTo: '',
@@ -1955,7 +2279,6 @@ __webpack_require__.r(__webpack_exports__);
   methods: {
     showLeaveModal: function showLeaveModal() {
       this.showModal = true;
-      this.updateBtn = false;
       this.errors = [];
       this.successMsg = '';
       this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
@@ -1970,13 +2293,14 @@ __webpack_require__.r(__webpack_exports__);
         totalDays: this.totalDays,
         details: this.details
       }).then(function (response) {
-        console.log(response.data);
         _this.showModal = false;
 
-        _this.leaves.push(response.data);
+        if (response.data) {
+          _this.leaves.push(response.data);
 
-        _this.leaveType = _this.dateFrom = _this.dateTo = _this.totalDays = _this.details = '';
-        _this.successMsg = 'Leave has been added successfully!';
+          _this.leaveType = _this.dateFrom = _this.dateTo = _this.totalDays = _this.details = '';
+          _this.successMsg = 'Leave has been added successfully!';
+        }
       }).catch(function (e) {
         if (e.response.status == 422) {
           _this.errors = [];
@@ -1985,57 +2309,12 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    editLeave: function editLeave(id) {
+    showLeave: function showLeave(id) {
       var _this2 = this;
 
-      axios.get("http://localhost:9000/axil/public/" + 'employee/leaves/' + id + '/edit').then(function (response) {
-        _this2.showModal = true;
-        _this2.updateBtn = true;
-        _this2.errors = [];
-        _this2.successMsg = '';
-        _this2.id = response.data.id;
-        _this2.leaveType = response.data.type_id;
-        _this2.dateFrom = response.data.date_from;
-        _this2.dateTo = response.data.date_to;
-        _this2.totalDays = response.data.total_days;
-        _this2.details = response.data.details;
-      }).catch(function (error) {
-        console.error(error);
-      });
-    },
-    updateLeave: function updateLeave(id) {
-      var _this3 = this;
-
-      axios.put("http://localhost:9000/axil/public/" + 'employee/leaves/' + id, {
-        leaveType: this.leaveType,
-        dateFrom: this.dateFrom,
-        dateTo: this.dateTo,
-        totalDays: this.totalDays,
-        details: this.details
-      }).then(function (response) {
-        console.log(response.data);
-        _this3.showModal = false;
-
-        _this3.$set(_this3.leaves, _this3.leaves.indexOf(_this3.leaves.filter(function (item) {
-          return item.id == id;
-        })[0]), response.data);
-
-        _this3.leaveType = _this3.dateFrom = _this3.dateTo = _this3.totalDays = _this3.details = '';
-        _this3.successMsg = 'Leave has been updated successfully!';
-      }).catch(function (e) {
-        if (e.response.status == 422) {
-          _this3.errors = [];
-
-          _this3.errors.push(e.response.data.errors);
-        }
-      });
-    },
-    showLeave: function showLeave(id) {
-      var _this4 = this;
-
       axios.get("http://localhost:9000/axil/public/" + 'employee/leaves/' + id).then(function (response) {
-        _this4.showLeaveDetailsModal = true;
-        _this4.leaveDetails = response.data; //                    this.id = response.data.id;
+        _this2.showLeaveDetailsModal = true;
+        _this2.leaveDetails = response.data; //                    this.id = response.data.id;
         //                    this.leaveType = response.data.type_id;
         //                    this.dateFrom = response.data.date_from;
         //                    this.dateTo = response.data.date_to;
@@ -38414,10 +38693,10 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EmployeeLeaveListComponent.vue?vue&type=template&id=21a200fe&":
-/*!*****************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/EmployeeLeaveListComponent.vue?vue&type=template&id=21a200fe& ***!
-  \*****************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Admin/LeaveListComponent.vue?vue&type=template&id=72472ed3&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Admin/LeaveListComponent.vue?vue&type=template&id=72472ed3& ***!
+  \***************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -38493,14 +38772,24 @@ var render = function() {
                       _vm._v(_vm._s(leave.type ? leave.type.type_name : ""))
                     ]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(leave.date_from))]),
+                    _c("td", [
+                      _vm._v(_vm._s(_vm.fFormatDate(leave.date_from)))
+                    ]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(leave.date_to))]),
+                    _c("td", [_vm._v(_vm._s(_vm.fFormatDate(leave.date_to)))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(leave.total_days))]),
                     _vm._v(" "),
                     _c("td", [
-                      _vm._v(_vm._s(leave.status ? "Approved" : "Pending"))
+                      _vm._v(
+                        _vm._s(
+                          leave.status == 1
+                            ? "Approved"
+                            : leave.status == 2
+                            ? "Rejected"
+                            : "Pending"
+                        )
+                      )
                     ]),
                     _vm._v(" "),
                     _c("td", [
@@ -38528,6 +38817,40 @@ var render = function() {
                           }
                         },
                         [_c("i", { staticClass: "fa fa-eye" })]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "a",
+                        {
+                          staticClass: "btn btn-primary btn-xs",
+                          on: {
+                            click: function($event) {
+                              return _vm.statusChange(leave.id, 1)
+                            }
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\n                                    Approve\n                                "
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "a",
+                        {
+                          staticClass: "btn btn-danger btn-xs",
+                          on: {
+                            click: function($event) {
+                              return _vm.statusChange(leave.id, 2)
+                            }
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "\n                                    Reject\n                                "
+                          )
+                        ]
                       )
                     ])
                   ])
@@ -38806,7 +39129,7 @@ var render = function() {
                                 },
                                 on: {
                                   click: function($event) {
-                                    return _vm.updateLeave(_vm.id)
+                                    return _vm.updateLeave(_vm.id, _vm.empId)
                                   }
                                 }
                               },
@@ -38828,6 +39151,610 @@ var render = function() {
                               },
                               [_vm._v("Submit")]
                             ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-default",
+                            attrs: { type: "reset" }
+                          },
+                          [_vm._v("Clear")]
+                        )
+                      ])
+                    ])
+                  ]
+                )
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-default",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        _vm.showModal = false
+                      }
+                    }
+                  },
+                  [_vm._v("Close")]
+                )
+              ])
+            ])
+          ])
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          class: { "in show": _vm.showLeaveDetailsModal },
+          attrs: { id: "showLeaveDetailsModal", role: "dialog" }
+        },
+        [
+          _c("div", { staticClass: "modal-dialog modal-lg" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        _vm.showLeaveDetailsModal = false
+                      }
+                    }
+                  },
+                  [_vm._v("×")]
+                ),
+                _vm._v(" "),
+                _c("h4", { staticClass: "modal-title" }, [
+                  _vm._v(
+                    _vm._s(
+                      _vm.leaveDetails.type
+                        ? _vm.leaveDetails.type.type_name
+                        : ""
+                    )
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "row" }, [
+                  _c("p", { staticClass: "col-sm-3" }, [_vm._v("Date :")]),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "col-sm-8" }, [
+                    _vm._v(
+                      _vm._s(
+                        _vm.fFormatDate(_vm.leaveDetails.date_from) +
+                          " - " +
+                          _vm.fFormatDate(_vm.leaveDetails.date_to)
+                      ) +
+                        " (" +
+                        _vm._s(
+                          _vm.leaveDetails.total_days +
+                            (_vm.leaveDetails.total_days > 1 ? " days" : " day")
+                        ) +
+                        ")"
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("p", { staticClass: "col-sm-3" }, [_vm._v("Status :")]),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "col-sm-8" }, [
+                    _vm._v(
+                      _vm._s(_vm.leaveDetails.status ? "Approved" : "Pending")
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("p", { staticClass: "col-sm-3" }, [_vm._v("Details :")]),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "col-sm-8" }, [
+                    _vm._v(_vm._s(_vm.leaveDetails.details))
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-default",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        _vm.showLeaveDetailsModal = false
+                      }
+                    }
+                  },
+                  [_vm._v("Close")]
+                )
+              ])
+            ])
+          ])
+        ]
+      )
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("section", { staticClass: "content-header" }, [
+      _c("h1", [_vm._v("Leave")]),
+      _vm._v(" "),
+      _c("ol", { staticClass: "breadcrumb" }, [
+        _c("li", [
+          _c("a", { attrs: { href: "#" } }, [
+            _c("i", { staticClass: "fa fa-dashboard" }),
+            _vm._v(" Home")
+          ])
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "active" }, [_vm._v("Leave")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("#")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Leave Type")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Date From")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Date To")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Total Days")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("status")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Actions")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { staticClass: "col-sm-3 control-label", attrs: { for: "leaveType" } },
+      [
+        _vm._v("Leave Type "),
+        _c("span", { staticClass: "required" }, [_vm._v("*")])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { staticClass: "col-sm-3 control-label", attrs: { for: "dateFrom" } },
+      [
+        _vm._v("Date From "),
+        _c("span", { staticClass: "required" }, [_vm._v("*")])
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { staticClass: "col-sm-3 control-label", attrs: { for: "dateTo" } },
+      [
+        _vm._v("Date To "),
+        _c("span", { staticClass: "required" }, [_vm._v("*")])
+      ]
+    )
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/EmployeeLeaveListComponent.vue?vue&type=template&id=21a200fe&":
+/*!*****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/EmployeeLeaveListComponent.vue?vue&type=template&id=21a200fe& ***!
+  \*****************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("section", { staticClass: "content" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-md-12" }, [
+          _c("div", { staticClass: "box box-info" }, [
+            _c("div", { staticClass: "box-header with-border" }, [
+              _c("h3", { staticClass: "box-title" }, [_vm._v("List of Leave")]),
+              _vm._v(" "),
+              _vm.successMsg
+                ? _c(
+                    "div",
+                    {
+                      staticClass:
+                        "alert alert-success alert-dismissable fade in custom-alert"
+                    },
+                    [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "close",
+                          attrs: {
+                            href: "#",
+                            "data-dismiss": "alert",
+                            "aria-label": "close"
+                          }
+                        },
+                        [_vm._v("×")]
+                      ),
+                      _vm._v(" "),
+                      _c("strong", [_vm._v("Success!")]),
+                      _vm._v(
+                        " " +
+                          _vm._s(_vm.successMsg) +
+                          "\n                        "
+                      )
+                    ]
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _c(
+                "a",
+                {
+                  staticClass: "btn btn-primary btn-sm pull-right",
+                  on: { click: _vm.showLeaveModal }
+                },
+                [_c("i", { staticClass: "fa fa-plus" })]
+              )
+            ]),
+            _vm._v(" "),
+            _c("table", { staticClass: "table table-bordered" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c(
+                "tbody",
+                _vm._l(_vm.leaves, function(leave, index) {
+                  return _c("tr", { key: leave.id }, [
+                    _c("td", [_vm._v(_vm._s(index + 1))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(_vm._s(leave.type ? leave.type.type_name : ""))
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(_vm._s(_vm.fFormatDate(leave.date_from)))
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(_vm.fFormatDate(leave.date_to)))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(leave.total_days))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(_vm._s(leave.status ? "Approved" : "Pending"))
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c(
+                        "a",
+                        {
+                          staticClass: "btn btn-success btn-xs",
+                          on: {
+                            click: function($event) {
+                              return _vm.showLeave(leave.id)
+                            }
+                          }
+                        },
+                        [_c("i", { staticClass: "fa fa-eye" })]
+                      )
+                    ])
+                  ])
+                }),
+                0
+              )
+            ])
+          ])
+        ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          class: { "in show": _vm.showModal },
+          attrs: { id: "leaveModal", role: "dialog" }
+        },
+        [
+          _c("div", { staticClass: "modal-dialog modal-lg" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        _vm.showModal = false
+                      }
+                    }
+                  },
+                  [_vm._v("×")]
+                ),
+                _vm._v(" "),
+                _c("h4", { staticClass: "modal-title" }, [
+                  _vm._v("Request Leave")
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "form",
+                  {
+                    staticClass: "form-horizontal",
+                    attrs: { method: "post", enctype: "multipart/form-data" },
+                    on: {
+                      submit: function($event) {
+                        $event.preventDefault()
+                        return _vm.onSubmit($event)
+                      }
+                    }
+                  },
+                  [
+                    _c("div", { staticClass: "form-group" }, [
+                      _vm._m(2),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-8" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.leaveType,
+                                expression: "leaveType"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { name: "leaveType", id: "leaveType" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.leaveType = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "" } }, [
+                              _vm._v("--Choose Leave Type--")
+                            ]),
+                            _vm._v(" "),
+                            _vm._l(_vm.types, function(type) {
+                              return _c(
+                                "option",
+                                { key: type.id, domProps: { value: type.id } },
+                                [_vm._v(_vm._s(type.type_name))]
+                              )
+                            })
+                          ],
+                          2
+                        ),
+                        _vm._v(" "),
+                        _vm.errors.length && _vm.errors[0].leaveType
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors[0].leaveType[0]))
+                            ])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _vm._m(3),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-8" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.dateFrom,
+                              expression: "dateFrom"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "date",
+                            name: "dateFrom",
+                            id: "dateFrom",
+                            placeholder: "Date From"
+                          },
+                          domProps: { value: _vm.dateFrom },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.dateFrom = $event.target.value
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _vm.errors.length && _vm.errors[0].dateFrom
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors[0].dateFrom[0]))
+                            ])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _vm._m(4),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-8" }, [
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.dateTo,
+                              expression: "dateTo"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            type: "date",
+                            name: "dateTo",
+                            id: "dateTo",
+                            placeholder: "Date To"
+                          },
+                          domProps: { value: _vm.dateTo },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.dateTo = $event.target.value
+                            }
+                          }
+                        }),
+                        _vm._v(" "),
+                        _vm.errors.length && _vm.errors[0].dateTo
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors[0].dateTo[0]))
+                            ])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-3 control-label",
+                          attrs: { for: "totalDays" }
+                        },
+                        [_vm._v("Total Days")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-8" }, [
+                        _c(
+                          "span",
+                          {
+                            staticClass: "form-control",
+                            attrs: { type: "text", id: "totalDays" }
+                          },
+                          [
+                            _vm._v(
+                              _vm._s(
+                                _vm.dateFrom && _vm.dateTo
+                                  ? Math.ceil(
+                                      Math.abs(
+                                        new Date(_vm.dateTo).getTime() -
+                                          new Date(_vm.dateFrom).getTime()
+                                      ) / 86400000
+                                    ) + 1
+                                  : 0
+                              )
+                            )
+                          ]
+                        )
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c(
+                        "label",
+                        {
+                          staticClass: "col-sm-3 control-label",
+                          attrs: { for: "details" }
+                        },
+                        [_vm._v("Details")]
+                      ),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-8" }, [
+                        _c("textarea", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.details,
+                              expression: "details"
+                            }
+                          ],
+                          staticClass: "form-control",
+                          attrs: {
+                            name: "details",
+                            id: "details",
+                            placeholder: "Leave Details",
+                            rows: "10"
+                          },
+                          domProps: { value: _vm.details },
+                          on: {
+                            input: function($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.details = $event.target.value
+                            }
+                          }
+                        })
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _c("div", { staticClass: "col-sm-offset-3 col-sm-8" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-info",
+                            attrs: { type: "button", "data-dismiss": "modal" },
+                            on: {
+                              click: function($event) {
+                                return _vm.addLeave()
+                              }
+                            }
+                          },
+                          [_vm._v("Submit")]
+                        ),
                         _vm._v(" "),
                         _c(
                           "button",
@@ -53862,6 +54789,7 @@ Vue.component('admin', __webpack_require__(/*! ./components/admin/AdminListCompo
 Vue.component('employee', __webpack_require__(/*! ./components/admin/EmployeeListComponent.vue */ "./resources/js/components/admin/EmployeeListComponent.vue").default);
 Vue.component('leave-type', __webpack_require__(/*! ./components/admin/LeaveTypeListComponent.vue */ "./resources/js/components/admin/LeaveTypeListComponent.vue").default);
 Vue.component('employee-leave', __webpack_require__(/*! ./components/EmployeeLeaveListComponent.vue */ "./resources/js/components/EmployeeLeaveListComponent.vue").default);
+Vue.component('leave-list', __webpack_require__(/*! ./components/Admin/LeaveListComponent.vue */ "./resources/js/components/Admin/LeaveListComponent.vue").default);
 var app = new Vue({
   el: '#app'
 });
@@ -53923,6 +54851,75 @@ if (token) {
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+/***/ }),
+
+/***/ "./resources/js/components/Admin/LeaveListComponent.vue":
+/*!**************************************************************!*\
+  !*** ./resources/js/components/Admin/LeaveListComponent.vue ***!
+  \**************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _LeaveListComponent_vue_vue_type_template_id_72472ed3___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LeaveListComponent.vue?vue&type=template&id=72472ed3& */ "./resources/js/components/Admin/LeaveListComponent.vue?vue&type=template&id=72472ed3&");
+/* harmony import */ var _LeaveListComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LeaveListComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/Admin/LeaveListComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _LeaveListComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _LeaveListComponent_vue_vue_type_template_id_72472ed3___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _LeaveListComponent_vue_vue_type_template_id_72472ed3___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Admin/LeaveListComponent.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Admin/LeaveListComponent.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************!*\
+  !*** ./resources/js/components/Admin/LeaveListComponent.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveListComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./LeaveListComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Admin/LeaveListComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveListComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Admin/LeaveListComponent.vue?vue&type=template&id=72472ed3&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/js/components/Admin/LeaveListComponent.vue?vue&type=template&id=72472ed3& ***!
+  \*********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveListComponent_vue_vue_type_template_id_72472ed3___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./LeaveListComponent.vue?vue&type=template&id=72472ed3& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Admin/LeaveListComponent.vue?vue&type=template&id=72472ed3&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveListComponent_vue_vue_type_template_id_72472ed3___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveListComponent_vue_vue_type_template_id_72472ed3___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
 
 /***/ }),
 

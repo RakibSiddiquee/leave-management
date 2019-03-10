@@ -12,11 +12,16 @@ Route::prefix('admin')->name('admin.')->group(function (){
         Route::get('/dashboard', 'Admin\DashboardController@index')->name('dashboard');
         Route::resource('designations', 'Admin\DesignationController')->except(['create', 'show']);
         Route::resource('departments', 'Admin\DepartmentController')->except(['create', 'show']);
+
         Route::post('/admins/change-status', 'Admin\AdminController@changeStatus');
         Route::resource('admins', 'Admin\AdminController')->except(['create', 'show']);
+
         Route::post('/employees/change-status', 'Admin\EmployeeController@changeStatus');
         Route::resource('employees', 'Admin\EmployeeController')->except(['create', 'show']);
+
         Route::resource('leave-types', 'Admin\LeaveTypeController')->except(['create', 'show']);
+        Route::post('/leaves/change-status', 'LeaveController@changeStatus');
+        Route::resource('/leaves', 'LeaveController');
     });
 
 });

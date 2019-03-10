@@ -40,6 +40,7 @@ Vue.component('admin', require('./components/admin/AdminListComponent.vue').defa
 Vue.component('employee', require('./components/admin/EmployeeListComponent.vue').default);
 Vue.component('leave-type', require('./components/admin/LeaveTypeListComponent.vue').default);
 Vue.component('employee-leave', require('./components/EmployeeLeaveListComponent.vue').default);
+Vue.component('leave-list', require('./components/Admin/LeaveListComponent.vue').default);
 
 
 const app = new Vue({

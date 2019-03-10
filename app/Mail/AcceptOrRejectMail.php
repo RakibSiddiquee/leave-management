@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class LeaveRequestMail extends Mailable
+class AcceptOrRejectMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -16,11 +16,11 @@ class LeaveRequestMail extends Mailable
      *
      * @return void
      */
-    protected $leave, $totalDays;
-    public function __construct($leave, $totalDays)
+    protected $status, $leave;
+    public function __construct($status, $leave)
     {
+        $this->status = $status;
         $this->leave = $leave;
-        $this->totalDays = $totalDays;
     }
 
     /**
@@ -30,10 +30,10 @@ class LeaveRequestMail extends Mailable
      */
     public function build()
     {
+        $status = $this->status;
         $leaveDetails = $this->leave;
-        $days = $this->totalDays;
-        return $this->subject('Leave Request')
-                ->view('mail-template.leave-request', compact('leaveDetails', 'days'));
+        return $this->subject('Leave Request '. $status)
+            ->view('mail-template.accept-reject', compact('status', 'leaveDetails'));
 
     }
 }

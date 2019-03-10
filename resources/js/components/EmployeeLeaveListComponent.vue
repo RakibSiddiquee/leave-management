@@ -44,15 +44,15 @@
                             <tr v-for="(leave,index) in leaves" :key="leave.id">
                                 <td>{{ index+1 }}</td>
                                 <td>{{ leave.type ? leave.type.type_name : '' }}</td>
-                                <td>{{ leave.date_from }}</td>
-                                <td>{{ leave.date_to }}</td>
+                                <td>{{ fFormatDate(leave.date_from) }}</td>
+                                <td>{{ fFormatDate(leave.date_to) }}</td>
                                 <td>{{ leave.total_days }}</td>
                                 <td>{{ leave.status ? 'Approved' : 'Pending' }}</td>
                                 <td>
-                                    <a class="btn btn-warning btn-xs" @click="editLeave(leave.id)">
+                                    <!--<a class="btn btn-warning btn-xs" @click="editLeave(leave.id)">-->
 
-                                        <i class="fa fa-pencil"></i>
-                                    </a>
+                                        <!--<i class="fa fa-pencil"></i>-->
+                                    <!--</a>-->
                                     <a class="btn btn-success btn-xs" @click="showLeave(leave.id)">
                                         <i class="fa fa-eye"></i>
                                     </a>
@@ -118,8 +118,7 @@
 
                                 <div class="form-group">
                                     <div class="col-sm-offset-3 col-sm-8">
-                                        <button type="button" v-if="updateBtn" @click="updateLeave(id)" class="btn btn-info" data-dismiss="modal">Update</button>
-                                        <button type="button" v-else @click="addLeave()" class="btn btn-info"  data-dismiss="modal">Submit</button>
+                                        <button type="button" @click="addLeave()" class="btn btn-info"  data-dismiss="modal">Submit</button>
                                         <button type="reset" class="btn btn-default">Clear</button>
                                     </div>
                                 </div>
@@ -182,7 +181,6 @@
                 id: '',
                 errors: [],
                 successMsg: '',
-                updateBtn: false,
                 leaveType: '',
                 dateFrom: '',
                 dateTo: '',
@@ -195,7 +193,6 @@
 
             showLeaveModal(){
                 this.showModal=true;
-                this.updateBtn = false;
                 this.errors = [];
                 this.successMsg = '';
                 this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
@@ -212,11 +209,13 @@
                     details: this.details
 
                 }).then(response => {
-                    console.log(response.data);
                     this.showModal=false;
-                    this.leaves.push(response.data);
-                    this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
-                    this.successMsg = 'Leave has been added successfully!';
+                    if (response.data){
+                        this.leaves.push(response.data);
+                        this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
+                        this.successMsg = 'Leave has been added successfully!';
+                    }
+
                 }).catch(e => {
                     if (e.response.status == 422){
                         this.errors = [];
@@ -224,46 +223,6 @@
                     }
                 });
 
-            },
-
-            editLeave(id){
-                axios.get(process.env.MIX_APP_URL+'employee/leaves/'+id+'/edit').then(response => {
-                    this.showModal = true;
-                    this.updateBtn = true;
-                    this.errors = [];
-                    this.successMsg = '';
-                    this.id = response.data.id;
-                    this.leaveType = response.data.type_id;
-                    this.dateFrom = response.data.date_from;
-                    this.dateTo = response.data.date_to;
-                    this.totalDays = response.data.total_days;
-                    this.details = response.data.details;
-                }).catch(error => {
-                    console.error(error)
-                });
-            },
-
-            updateLeave(id){
-                axios.put(process.env.MIX_APP_URL+'employee/leaves/'+id,{
-                    leaveType: this.leaveType,
-                    dateFrom: this.dateFrom,
-                    dateTo: this.dateTo,
-                    totalDays: this.totalDays,
-                    details: this.details
-                }).then(response => {
-                    console.log(response.data);
-                    this.showModal=false;
-                    this.$set(this.leaves, this.leaves.indexOf(this.leaves.filter(function (item) {
-                        return item.id == id;
-                    })[0]), response.data);
-                    this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
-                    this.successMsg = 'Leave has been updated successfully!';
-                }).catch(e => {
-                    if (e.response.status == 422){
-                        this.errors = [];
-                        this.errors.push(e.response.data.errors);
-                    }
-                });
             },
 
             showLeave(id){

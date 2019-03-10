@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Leave;
 use App\LeaveType;
+use App\Mail\LeaveRequestMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class LeaveController extends Controller
 {
@@ -36,8 +38,18 @@ class LeaveController extends Controller
         $leave->details = $request->details;
         $leave->save();
 
+        $leave = Leave::with('type')->find($leave->id);
+
+        Mail::to(auth('employee')->user()->email)->send(new LeaveRequestMail($leave));
+
         return $leave;
 
+    }
+
+    public function show($id)
+    {
+        $leave = Leave::with('type')->find($id);
+        return $leave;
     }
 
     public function edit($id)

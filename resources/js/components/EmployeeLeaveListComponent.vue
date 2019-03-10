@@ -43,17 +43,17 @@
 
                             <tr v-for="(leave,index) in leaves" :key="leave.id">
                                 <td>{{ index+1 }}</td>
-                                <td>{{ leave.type.type_name }}</td>
+                                <td>{{ leave.type ? leave.type.type_name : '' }}</td>
                                 <td>{{ leave.date_from }}</td>
                                 <td>{{ leave.date_to }}</td>
                                 <td>{{ leave.total_days }}</td>
-                                <td>{{ leave.status }} <i class="fa fa-check"></i> </td>
+                                <td>{{ leave.status ? 'Approved' : 'Pending' }}</td>
                                 <td>
                                     <a class="btn btn-warning btn-xs" @click="editLeave(leave.id)">
 
                                         <i class="fa fa-pencil"></i>
                                     </a>
-                                    <a class="btn btn-success btn-xs" @click="deleteLeave(leave.id)">
+                                    <a class="btn btn-success btn-xs" @click="showLeave(leave.id)">
                                         <i class="fa fa-eye"></i>
                                     </a>
                                 </td>
@@ -132,6 +132,35 @@
                 </div>
             </div>
 
+            <!--Show Leave Modal-->
+            <div class="modal fade" :class="{ 'in show': showLeaveDetailsModal }" id="showLeaveDetailsModal" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" @click="showLeaveDetailsModal=false">&times;</button>
+                            <h4 class="modal-title">{{ leaveDetails.type ? leaveDetails.type.type_name : '' }}</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <p class="col-sm-3">Date :</p>
+                                <p class="col-sm-8">{{ fFormatDate(leaveDetails.date_from) +' - '+ fFormatDate(leaveDetails.date_to) }} ({{ leaveDetails.total_days + (leaveDetails.total_days > 1 ? ' days' : ' day') }})</p>
+                            </div>
+                            <div class="row">
+                                <p class="col-sm-3">Status :</p>
+                                <p class="col-sm-8">{{ leaveDetails.status ? 'Approved' : 'Pending' }}</p>
+                            </div>
+                            <div class="row">
+                                <p class="col-sm-3">Details :</p>
+                                <p class="col-sm-8">{{ leaveDetails.details}}</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" @click="showLeaveDetailsModal=false">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </section>
 
     <!-- /.content -->
@@ -147,7 +176,9 @@
             return {
                 types: this.leaveTypes,
                 leaves: this.lvs,
+                leaveDetails: '',
                 showModal: false,
+                showLeaveDetailsModal: false,
                 id: '',
                 errors: [],
                 successMsg: '',
@@ -235,20 +266,19 @@
                 });
             },
 
-            deleteLeave(id){
-                if (confirm("Do you want to delete the leave?")){
-                    axios.delete(process.env.MIX_APP_URL+'employee/leaves/'+id).then(response => {
-                        if (response.status == 200){
-                            this.$delete(this.leaves, this.leaves.indexOf(this.leaves.filter(function (item) {
-                                return item.id == id;
-                            })[0]));
-                            this.successMsg = 'Leave has been deleted successfully!';
-
-                        }
-                    }).catch(error => {
-                        console.log(error);
-                    });
-                }
+            showLeave(id){
+                axios.get(process.env.MIX_APP_URL+'employee/leaves/'+id).then(response => {
+                    this.showLeaveDetailsModal = true;
+                    this.leaveDetails = response.data;
+//                    this.id = response.data.id;
+//                    this.leaveType = response.data.type_id;
+//                    this.dateFrom = response.data.date_from;
+//                    this.dateTo = response.data.date_to;
+//                    this.totalDays = response.data.total_days;
+//                    this.details = response.data.details;
+                }).catch(error => {
+                    console.error(error)
+                });
 
             }
 

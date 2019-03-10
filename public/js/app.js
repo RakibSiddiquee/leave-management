@@ -1903,13 +1903,44 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['lvs', 'leaveTypes'],
   data: function data() {
     return {
       types: this.leaveTypes,
       leaves: this.lvs,
+      leaveDetails: '',
       showModal: false,
+      showLeaveDetailsModal: false,
       id: '',
       errors: [],
       successMsg: '',
@@ -1999,22 +2030,20 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    deleteLeave: function deleteLeave(id) {
+    showLeave: function showLeave(id) {
       var _this4 = this;
 
-      if (confirm("Do you want to delete the leave?")) {
-        axios.delete("http://localhost:9000/axil/public/" + 'employee/leaves/' + id).then(function (response) {
-          if (response.status == 200) {
-            _this4.$delete(_this4.leaves, _this4.leaves.indexOf(_this4.leaves.filter(function (item) {
-              return item.id == id;
-            })[0]));
-
-            _this4.successMsg = 'Leave has been deleted successfully!';
-          }
-        }).catch(function (error) {
-          console.log(error);
-        });
-      }
+      axios.get("http://localhost:9000/axil/public/" + 'employee/leaves/' + id).then(function (response) {
+        _this4.showLeaveDetailsModal = true;
+        _this4.leaveDetails = response.data; //                    this.id = response.data.id;
+        //                    this.leaveType = response.data.type_id;
+        //                    this.dateFrom = response.data.date_from;
+        //                    this.dateTo = response.data.date_to;
+        //                    this.totalDays = response.data.total_days;
+        //                    this.details = response.data.details;
+      }).catch(function (error) {
+        console.error(error);
+      });
     }
   },
   mounted: function mounted() {
@@ -2176,6 +2205,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['admns'],
   data: function data() {
@@ -2188,6 +2238,7 @@ __webpack_require__.r(__webpack_exports__);
       updateBtn: false,
       name: '',
       username: '',
+      role: '',
       email: '',
       password: '',
       password_confirmation: '',
@@ -2201,7 +2252,7 @@ __webpack_require__.r(__webpack_exports__);
       this.updateBtn = false;
       this.errors = [];
       this.successMsg = '';
-      this.name = this.username = this.email = this.password = this.password_confirmation = this.address = this.status = '';
+      this.name = this.username = this.role = this.email = this.password = this.password_confirmation = this.address = this.status = '';
     },
     addAdmin: function addAdmin() {
       var _this = this;
@@ -2209,6 +2260,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.post("http://localhost:9000/axil/public/" + 'admin/admins', {
         name: this.name,
         username: this.username,
+        role: this.role,
         email: this.email,
         password: this.password,
         password_confirmation: this.password_confirmation,
@@ -2219,7 +2271,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this.admins.push(response.data);
 
-        _this.name = _this.username = _this.email = _this.password = _this.password_confirmation = _this.address = _this.status = '';
+        _this.name = _this.username = _this.role = _this.email = _this.password = _this.password_confirmation = _this.address = _this.status = '';
         _this.successMsg = 'Admin has been added successfully!';
       }).catch(function (e) {
         if (e.response.status == 422) {
@@ -2229,58 +2281,80 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    editAdmin: function editAdmin(id) {
+    statusChange: function statusChange(id, status) {
       var _this2 = this;
 
+      if (confirm("Do you want to " + (status == 1 ? 'Inactive' : 'active') + " the admin?")) {
+        axios.post("http://localhost:9000/axil/public/" + 'admin/admins/change-status', {
+          id: id,
+          status: status
+        }).then(function (response) {
+          _this2.$set(_this2.admins, _this2.admins.indexOf(_this2.admins.filter(function (item) {
+            return item.id == id;
+          })[0]), response.data); //                    console.log(response);
+
+
+          _this2.successMsg = 'Admin status has been changed successfully!';
+        }).catch(function (e) {
+          if (e.response.status == 422) {
+            console.log(e);
+          }
+        });
+      }
+    },
+    editAdmin: function editAdmin(id) {
+      var _this3 = this;
+
       axios.get("http://localhost:9000/axil/public/" + 'admin/admins/' + id + '/edit').then(function (response) {
-        _this2.showModal = true;
-        _this2.updateBtn = true;
-        _this2.errors = [];
-        _this2.successMsg = '';
-        _this2.id = response.data.id;
-        _this2.name = response.data.dept_name;
-        _this2.name = response.data.name;
-        _this2.username = response.data.username;
-        _this2.email = response.data.email;
-        _this2.address = response.data.address;
+        _this3.showModal = true;
+        _this3.updateBtn = true;
+        _this3.errors = [];
+        _this3.successMsg = '';
+        _this3.id = response.data.id;
+        _this3.name = response.data.name;
+        _this3.username = response.data.username;
+        _this3.role = response.data.role;
+        _this3.email = response.data.email;
+        _this3.address = response.data.address;
       }).catch(function (error) {
         console.error(error);
       });
     },
     updateAdmin: function updateAdmin(id) {
-      var _this3 = this;
+      var _this4 = this;
 
       axios.put("http://localhost:9000/axil/public/" + 'admin/admins/' + id, {
         name: this.name,
         username: this.username,
+        role: this.role,
         email: this.email,
         address: this.address
       }).then(function (response) {
-        _this3.showModal = false;
+        _this4.showModal = false;
 
-        _this3.$set(_this3.admins, _this3.admins.indexOf(_this3.admins.filter(function (item) {
+        _this4.$set(_this4.admins, _this4.admins.indexOf(_this4.admins.filter(function (item) {
           return item.id == id;
         })[0]), response.data);
 
-        _this3.name = _this3.username = _this3.email = _this3.password = _this3.password_confirmation = _this3.address = _this3.status = '';
-        _this3.successMsg = 'Admin has been updated successfully!';
+        _this4.name = _this4.username = _this4.role = _this4.email = _this4.password = _this4.password_confirmation = _this4.address = _this4.status = '';
+        _this4.successMsg = 'Admin has been updated successfully!';
       }).catch(function (e) {
         if (e.response.status == 422) {
-          _this3.errors.push(e.response.data.errors);
+          _this4.errors.push(e.response.data.errors);
         }
       });
     },
     deleteAdmin: function deleteAdmin(id) {
-      var _this4 = this;
+      var _this5 = this;
 
-      if (confirm("Do you want to delete the user?")) {
+      if (confirm("Do you want to delete the admin?")) {
         axios.delete("http://localhost:9000/axil/public/" + 'admin/admins/' + id).then(function (response) {
           if (response.status == 200) {
-            _this4.$delete(_this4.admins, _this4.admins.indexOf(_this4.admins.filter(function (item) {
+            _this5.$delete(_this5.admins, _this5.admins.indexOf(_this5.admins.filter(function (item) {
               return item.id == id;
             })[0]));
 
-            _this4.successMsg = 'Admin has been deleted successfully!';
+            _this5.successMsg = 'Admin has been deleted successfully!';
           }
         }).catch(function (error) {
           console.log(error);
@@ -2915,6 +2989,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['desgs', 'depts', 'empls'],
   data: function data() {
@@ -2976,28 +3056,49 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    editEmployee: function editEmployee(id) {
+    statusChange: function statusChange(id, status) {
       var _this2 = this;
 
+      if (confirm("Do you want to " + (status == 1 ? 'Inactive' : 'active') + " the employee?")) {
+        axios.post("http://localhost:9000/axil/public/" + 'admin/employees/change-status', {
+          id: id,
+          status: status
+        }).then(function (response) {
+          _this2.$set(_this2.employees, _this2.employees.indexOf(_this2.employees.filter(function (item) {
+            return item.id == id;
+          })[0]), response.data); //                    console.log(response);
+
+
+          _this2.successMsg = 'Employee status has been changed successfully!';
+        }).catch(function (e) {
+          if (e.response.status == 422) {
+            console.log(e);
+          }
+        });
+      }
+    },
+    editEmployee: function editEmployee(id) {
+      var _this3 = this;
+
       axios.get("http://localhost:9000/axil/public/" + 'admin/employees/' + id + '/edit').then(function (response) {
-        _this2.showModal = true;
-        _this2.updateBtn = true;
-        _this2.errors = [];
-        _this2.successMsg = '';
-        _this2.id = response.data.id;
-        _this2.name = response.data.name;
-        _this2.designation = response.data.desg_id;
-        _this2.department = response.data.dept_id;
-        _this2.username = response.data.username;
-        _this2.contactNumber = response.data.phone;
-        _this2.email = response.data.email;
-        _this2.address = response.data.address;
+        _this3.showModal = true;
+        _this3.updateBtn = true;
+        _this3.errors = [];
+        _this3.successMsg = '';
+        _this3.id = response.data.id;
+        _this3.name = response.data.name;
+        _this3.designation = response.data.desg_id;
+        _this3.department = response.data.dept_id;
+        _this3.username = response.data.username;
+        _this3.contactNumber = response.data.phone;
+        _this3.email = response.data.email;
+        _this3.address = response.data.address;
       }).catch(function (error) {
         console.error(error);
       });
     },
     updateEmployee: function updateEmployee(id) {
-      var _this3 = this;
+      var _this4 = this;
 
       axios.put("http://localhost:9000/axil/public/" + 'admin/employees/' + id, {
         name: this.name,
@@ -3009,33 +3110,33 @@ __webpack_require__.r(__webpack_exports__);
         address: this.address,
         status: this.status
       }).then(function (response) {
-        _this3.showModal = false;
+        _this4.showModal = false;
 
-        _this3.$set(_this3.employees, _this3.employees.indexOf(_this3.employees.filter(function (item) {
+        _this4.$set(_this4.employees, _this4.employees.indexOf(_this4.employees.filter(function (item) {
           return item.id == id;
         })[0]), response.data);
 
-        _this3.name = _this3.designation = _this3.department = _this3.username = _this3.contactNumber = _this3.email = _this3.password = _this3.password_confirmation = _this3.address = _this3.status = '';
-        _this3.successMsg = 'Employee has been updated successfully!';
+        _this4.name = _this4.designation = _this4.department = _this4.username = _this4.contactNumber = _this4.email = _this4.password = _this4.password_confirmation = _this4.address = _this4.status = '';
+        _this4.successMsg = 'Employee has been updated successfully!';
       }).catch(function (e) {
         if (e.response.status == 422) {
-          _this3.errors = [];
+          _this4.errors = [];
 
-          _this3.errors.push(e.response.data.errors);
+          _this4.errors.push(e.response.data.errors);
         }
       });
     },
     deleteEmployee: function deleteEmployee(id) {
-      var _this4 = this;
+      var _this5 = this;
 
       if (confirm("Do you want to delete the employee?")) {
         axios.delete("http://localhost:9000/axil/public/" + 'admin/employees/' + id).then(function (response) {
           if (response.status == 200) {
-            _this4.$delete(_this4.employees, _this4.employees.indexOf(_this4.employees.filter(function (item) {
+            _this5.$delete(_this5.employees, _this5.employees.indexOf(_this5.employees.filter(function (item) {
               return item.id == id;
             })[0]));
 
-            _this4.successMsg = 'Employee has been deleted successfully!';
+            _this5.successMsg = 'Employee has been deleted successfully!';
           }
         }).catch(function (error) {
           console.log(error);
@@ -38388,7 +38489,9 @@ var render = function() {
                   return _c("tr", { key: leave.id }, [
                     _c("td", [_vm._v(_vm._s(index + 1))]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(leave.type.type_name))]),
+                    _c("td", [
+                      _vm._v(_vm._s(leave.type ? leave.type.type_name : ""))
+                    ]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(leave.date_from))]),
                     _vm._v(" "),
@@ -38397,8 +38500,7 @@ var render = function() {
                     _c("td", [_vm._v(_vm._s(leave.total_days))]),
                     _vm._v(" "),
                     _c("td", [
-                      _vm._v(_vm._s(leave.status) + " "),
-                      _c("i", { staticClass: "fa fa-check" })
+                      _vm._v(_vm._s(leave.status ? "Approved" : "Pending"))
                     ]),
                     _vm._v(" "),
                     _c("td", [
@@ -38421,7 +38523,7 @@ var render = function() {
                           staticClass: "btn btn-success btn-xs",
                           on: {
                             click: function($event) {
-                              return _vm.deleteLeave(leave.id)
+                              return _vm.showLeave(leave.id)
                             }
                           }
                         },
@@ -38759,6 +38861,102 @@ var render = function() {
             ])
           ])
         ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          class: { "in show": _vm.showLeaveDetailsModal },
+          attrs: { id: "showLeaveDetailsModal", role: "dialog" }
+        },
+        [
+          _c("div", { staticClass: "modal-dialog modal-lg" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _c("div", { staticClass: "modal-header" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "close",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        _vm.showLeaveDetailsModal = false
+                      }
+                    }
+                  },
+                  [_vm._v("×")]
+                ),
+                _vm._v(" "),
+                _c("h4", { staticClass: "modal-title" }, [
+                  _vm._v(
+                    _vm._s(
+                      _vm.leaveDetails.type
+                        ? _vm.leaveDetails.type.type_name
+                        : ""
+                    )
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "row" }, [
+                  _c("p", { staticClass: "col-sm-3" }, [_vm._v("Date :")]),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "col-sm-8" }, [
+                    _vm._v(
+                      _vm._s(
+                        _vm.fFormatDate(_vm.leaveDetails.date_from) +
+                          " - " +
+                          _vm.fFormatDate(_vm.leaveDetails.date_to)
+                      ) +
+                        " (" +
+                        _vm._s(
+                          _vm.leaveDetails.total_days +
+                            (_vm.leaveDetails.total_days > 1 ? " days" : " day")
+                        ) +
+                        ")"
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("p", { staticClass: "col-sm-3" }, [_vm._v("Status :")]),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "col-sm-8" }, [
+                    _vm._v(
+                      _vm._s(_vm.leaveDetails.status ? "Approved" : "Pending")
+                    )
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "row" }, [
+                  _c("p", { staticClass: "col-sm-3" }, [_vm._v("Details :")]),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "col-sm-8" }, [
+                    _vm._v(_vm._s(_vm.leaveDetails.details))
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-default",
+                    attrs: { type: "button" },
+                    on: {
+                      click: function($event) {
+                        _vm.showLeaveDetailsModal = false
+                      }
+                    }
+                  },
+                  [_vm._v("Close")]
+                )
+              ])
+            ])
+          ])
+        ]
       )
     ])
   ])
@@ -38930,6 +39128,12 @@ var render = function() {
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(admin.username))]),
                     _vm._v(" "),
+                    _c("td", [
+                      _vm._v(
+                        _vm._s(admin.role == 1 ? "System Admin" : "Manager")
+                      )
+                    ]),
+                    _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(admin.email))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(admin.address))]),
@@ -38938,7 +39142,34 @@ var render = function() {
                       _c(
                         "a",
                         {
+                          staticClass: "btn btn-xs",
+                          class: admin.status ? "btn-success" : "btn-danger",
+                          attrs: {
+                            title: admin.status
+                              ? "Inactive the user"
+                              : "Activate the user"
+                          },
+                          on: {
+                            click: function($event) {
+                              return _vm.statusChange(admin.id, admin.status)
+                            }
+                          }
+                        },
+                        [
+                          _c("i", {
+                            staticClass: "fa",
+                            class: admin.status ? "fa-check" : "fa-times"
+                          })
+                        ]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c(
+                        "a",
+                        {
                           staticClass: "btn btn-warning btn-xs",
+                          attrs: { title: "Edit the user" },
                           on: {
                             click: function($event) {
                               return _vm.editAdmin(admin.id)
@@ -38952,6 +39183,7 @@ var render = function() {
                         "a",
                         {
                           staticClass: "btn btn-danger btn-xs",
+                          attrs: { title: "Delete the user" },
                           on: {
                             click: function($event) {
                               return _vm.deleteAdmin(admin.id)
@@ -39094,6 +39326,62 @@ var render = function() {
                       _vm._m(4),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-sm-8" }, [
+                        _c(
+                          "select",
+                          {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: _vm.role,
+                                expression: "role"
+                              }
+                            ],
+                            staticClass: "form-control",
+                            attrs: { name: "role", id: "role" },
+                            on: {
+                              change: function($event) {
+                                var $$selectedVal = Array.prototype.filter
+                                  .call($event.target.options, function(o) {
+                                    return o.selected
+                                  })
+                                  .map(function(o) {
+                                    var val = "_value" in o ? o._value : o.value
+                                    return val
+                                  })
+                                _vm.role = $event.target.multiple
+                                  ? $$selectedVal
+                                  : $$selectedVal[0]
+                              }
+                            }
+                          },
+                          [
+                            _c("option", { attrs: { value: "" } }, [
+                              _vm._v("Choose Role")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "1" } }, [
+                              _vm._v("System Admin")
+                            ]),
+                            _vm._v(" "),
+                            _c("option", { attrs: { value: "2" } }, [
+                              _vm._v("Manager")
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _vm.errors.length && _vm.errors[0].role
+                          ? _c("span", { staticClass: "text-danger" }, [
+                              _vm._v(_vm._s(_vm.errors[0].role[0]))
+                            ])
+                          : _vm._e()
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "form-group" }, [
+                      _vm._m(5),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "col-sm-8" }, [
                         _c("input", {
                           directives: [
                             {
@@ -39131,7 +39419,7 @@ var render = function() {
                     _vm._v(" "),
                     !_vm.updateBtn
                       ? _c("div", { staticClass: "form-group" }, [
-                          _vm._m(5),
+                          _vm._m(6),
                           _vm._v(" "),
                           _c("div", { staticClass: "col-sm-8" }, [
                             _c("input", {
@@ -39172,7 +39460,7 @@ var render = function() {
                     _vm._v(" "),
                     !_vm.updateBtn
                       ? _c("div", { staticClass: "form-group" }, [
-                          _vm._m(6),
+                          _vm._m(7),
                           _vm._v(" "),
                           _c("div", { staticClass: "col-sm-8" }, [
                             _c("input", {
@@ -39357,9 +39645,13 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Username")]),
         _vm._v(" "),
+        _c("th", [_vm._v("Role")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Email")]),
         _vm._v(" "),
         _c("th", [_vm._v("Address")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status")]),
         _vm._v(" "),
         _c("th", [_vm._v("Actions")])
       ])
@@ -39386,6 +39678,16 @@ var staticRenderFns = [
         _vm._v("Username "),
         _c("span", { staticClass: "required" }, [_vm._v("*")])
       ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { staticClass: "col-sm-3 control-label", attrs: { for: "role" } },
+      [_vm._v("Role "), _c("span", { staticClass: "required" }, [_vm._v("*")])]
     )
   },
   function() {
@@ -40263,6 +40565,35 @@ var render = function() {
                       _c(
                         "a",
                         {
+                          staticClass: "btn btn-xs",
+                          class: employee.status ? "btn-success" : "btn-danger",
+                          attrs: {
+                            title: employee.status
+                              ? "Inactive the employee"
+                              : "Activate the employee"
+                          },
+                          on: {
+                            click: function($event) {
+                              return _vm.statusChange(
+                                employee.id,
+                                employee.status
+                              )
+                            }
+                          }
+                        },
+                        [
+                          _c("i", {
+                            staticClass: "fa",
+                            class: employee.status ? "fa-check" : "fa-times"
+                          })
+                        ]
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c(
+                        "a",
+                        {
                           staticClass: "btn btn-warning btn-xs",
                           on: {
                             click: function($event) {
@@ -40846,6 +41177,8 @@ var staticRenderFns = [
         _c("th", [_vm._v("Email")]),
         _vm._v(" "),
         _c("th", [_vm._v("Address")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status")]),
         _vm._v(" "),
         _c("th", [_vm._v("Actions")])
       ])
@@ -53510,6 +53843,19 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+Vue.mixin({
+  methods: {
+    fFormatDate: function fFormatDate(dt) {
+      var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      var d = new Date(dt),
+          month = '' + d.getMonth(),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+      if (day.length < 2) day = '0' + day;
+      return [day, months[month], year].join(' ');
+    }
+  }
+});
 Vue.component('designation', __webpack_require__(/*! ./components/admin/DesignationListComponent.vue */ "./resources/js/components/admin/DesignationListComponent.vue").default);
 Vue.component('department', __webpack_require__(/*! ./components/admin/DepartmentListComponent.vue */ "./resources/js/components/admin/DepartmentListComponent.vue").default);
 Vue.component('admin', __webpack_require__(/*! ./components/admin/AdminListComponent.vue */ "./resources/js/components/admin/AdminListComponent.vue").default);

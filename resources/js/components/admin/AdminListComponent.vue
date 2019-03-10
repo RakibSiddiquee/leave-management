@@ -33,8 +33,10 @@
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Username</th>
+                                <th>Role</th>
                                 <th>Email</th>
                                 <th>Address</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -44,13 +46,20 @@
                                 <td>{{ index+1 }}</td>
                                 <td>{{ admin.name }}</td>
                                 <td>{{ admin.username }}</td>
+                                <td>{{ admin.role == 1 ? 'System Admin' : 'Manager' }}</td>
                                 <td>{{ admin.email }}</td>
                                 <td>{{ admin.address }}</td>
                                 <td>
-                                    <a class="btn btn-warning btn-xs" @click="editAdmin(admin.id)">
+                                    <a class="btn btn-xs" :class="admin.status?'btn-success':'btn-danger'" @click="statusChange(admin.id, admin.status)" :title="admin.status?'Inactive the user':'Activate the user'">
+                                        <i class="fa" :class="admin.status?'fa-check':'fa-times'"></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="btn btn-warning btn-xs" @click="editAdmin(admin.id)" title="Edit the user">
                                         <i class="fa fa-pencil"></i>
                                     </a>
-                                    <a class="btn btn-danger btn-xs" @click="deleteAdmin(admin.id)">
+
+                                    <a class="btn btn-danger btn-xs" @click="deleteAdmin(admin.id)" title="Delete the user">
                                         <i class="fa fa-times"></i>
                                     </a>
                                 </td>
@@ -85,6 +94,18 @@
                                     <div class="col-sm-8">
                                         <input type="text" name="username" v-model="username" class="form-control" id="username" placeholder="Admin Username">
                                         <span v-if="errors.length && errors[0].username" class="text-danger">{{ errors[0].username[0] }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="role" class="col-sm-3 control-label">Role <span class="required">*</span></label>
+                                    <div class="col-sm-8">
+                                        <select name="role" v-model="role" class="form-control" id="role">
+                                            <option value="">Choose Role</option>
+                                            <option value="1">System Admin</option>
+                                            <option value="2">Manager</option>
+                                        </select>
+                                        <span v-if="errors.length && errors[0].role" class="text-danger">{{ errors[0].role[0] }}</span>
                                     </div>
                                 </div>
 
@@ -156,6 +177,7 @@
                 updateBtn: false,
                 name: '',
                 username: '',
+                role: '',
                 email: '',
                 password: '',
                 password_confirmation: '',
@@ -172,13 +194,14 @@
                 this.updateBtn = false;
                 this.errors = [];
                 this.successMsg = '';
-                this.name = this.username = this.email = this.password = this.password_confirmation = this.address = this.status = '';
+                this.name = this.username = this.role = this.email = this.password = this.password_confirmation = this.address = this.status = '';
             },
 
             addAdmin(){
                 axios.post(process.env.MIX_APP_URL+'admin/admins',{
                     name: this.name,
                     username: this.username,
+                    role: this.role,
                     email: this.email,
                     password: this.password,
                     password_confirmation: this.password_confirmation,
@@ -187,7 +210,7 @@
                 }).then(response => {
                     this.showModal=false;
                     this.admins.push(response.data);
-                    this.name = this.username = this.email = this.password = this.password_confirmation = this.address = this.status = '';
+                    this.name = this.username = this.role = this.email = this.password = this.password_confirmation = this.address = this.status = '';
                     this.successMsg = 'Admin has been added successfully!';
                 }).catch(e => {
                     if (e.response.status == 422){
@@ -198,6 +221,25 @@
 
             },
 
+            statusChange(id,status){
+                if (confirm("Do you want to "+(status==1?'Inactive':'active')+" the admin?")) {
+                    axios.post(process.env.MIX_APP_URL + 'admin/admins/change-status', {
+                        id: id,
+                        status: status,
+                    }).then(response => {
+                        this.$set(this.admins, this.admins.indexOf(this.admins.filter(function (item) {
+                            return item.id == id;
+                        })[0]), response.data);
+//                    console.log(response);
+                        this.successMsg = 'Admin status has been changed successfully!';
+                    }).catch(e => {
+                        if (e.response.status == 422) {
+                            console.log(e);
+                        }
+                    });
+                }
+            },
+
             editAdmin(id){
                 axios.get(process.env.MIX_APP_URL+'admin/admins/'+id+'/edit').then(response => {
                     this.showModal = true;
@@ -205,9 +247,9 @@
                     this.errors = [];
                     this.successMsg = '';
                     this.id = response.data.id;
-                    this.name = response.data.dept_name;
                     this.name = response.data.name;
                     this.username = response.data.username;
+                    this.role = response.data.role;
                     this.email = response.data.email;
                     this.address = response.data.address;
                 }).catch(error => {
@@ -219,6 +261,7 @@
                 axios.put(process.env.MIX_APP_URL+'admin/admins/'+id,{
                     name: this.name,
                     username: this.username,
+                    role: this.role,
                     email: this.email,
                     address: this.address,
                 }).then(response => {
@@ -226,7 +269,7 @@
                     this.$set(this.admins, this.admins.indexOf(this.admins.filter(function (item) {
                         return item.id == id;
                     })[0]), response.data);
-                    this.name = this.username = this.email = this.password = this.password_confirmation = this.address = this.status = '';
+                    this.name = this.username = this.role = this.email = this.password = this.password_confirmation = this.address = this.status = '';
                     this.successMsg = 'Admin has been updated successfully!';
                 }).catch(e => {
                     if (e.response.status == 422){
@@ -236,7 +279,7 @@
             },
 
             deleteAdmin(id){
-                if (confirm("Do you want to delete the user?")){
+                if (confirm("Do you want to delete the admin?")){
                     axios.delete(process.env.MIX_APP_URL+'admin/admins/'+id).then(response => {
                         if (response.status == 200){
                             this.$delete(this.admins, this.admins.indexOf(this.admins.filter(function (item) {

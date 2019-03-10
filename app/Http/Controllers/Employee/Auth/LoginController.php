@@ -48,6 +48,14 @@ class LoginController extends Controller
         return 'username';
     }
 
+    protected function credentials(Request $request)
+    {
+        $credentials = $request->only($this->username(), 'password');
+        $credentials['status'] = 1;
+        return $credentials;
+
+    }
+
     public function logout(Request $request)
     {
         $this->guard()->logout();

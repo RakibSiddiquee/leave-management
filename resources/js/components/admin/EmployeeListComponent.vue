@@ -35,6 +35,7 @@
                                 <th>Username</th>
                                 <th>Email</th>
                                 <th>Address</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                             </thead>
@@ -46,6 +47,11 @@
                                 <td>{{ employee.username }}</td>
                                 <td>{{ employee.email }}</td>
                                 <td>{{ employee.address }}</td>
+                                <td>
+                                    <a class="btn btn-xs" :class="employee.status?'btn-success':'btn-danger'" @click="statusChange(employee.id, employee.status)" :title="employee.status?'Inactive the employee':'Activate the employee'">
+                                        <i class="fa" :class="employee.status?'fa-check':'fa-times'"></i>
+                                    </a>
+                                </td>
                                 <td>
                                     <a class="btn btn-warning btn-xs" @click="editEmployee(employee.id)">
                                         <i class="fa fa-pencil"></i>
@@ -234,6 +240,25 @@
                     }
                 });
 
+            },
+
+            statusChange(id,status){
+                if (confirm("Do you want to "+(status==1?'Inactive':'active')+" the employee?")) {
+                    axios.post(process.env.MIX_APP_URL + 'admin/employees/change-status', {
+                        id: id,
+                        status: status,
+                    }).then(response => {
+                        this.$set(this.employees, this.employees.indexOf(this.employees.filter(function (item) {
+                            return item.id == id;
+                        })[0]), response.data);
+//                    console.log(response);
+                        this.successMsg = 'Employee status has been changed successfully!';
+                    }).catch(e => {
+                        if (e.response.status == 422) {
+                            console.log(e);
+                        }
+                    });
+                }
             },
 
             editEmployee(id){

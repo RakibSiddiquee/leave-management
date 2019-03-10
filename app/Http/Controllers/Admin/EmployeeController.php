@@ -51,6 +51,16 @@ class EmployeeController extends Controller
         return $employee;
     }
 
+    public function changeStatus(Request $request)
+    {
+        if (isset($request->id) && isset($request->status)){
+            $admin = Employee::find($request->id);
+            $admin->status = $request->status == 1 ? 0 : 1;
+            $admin->save();
+            return $admin;
+        }
+    }
+
     public function edit(Employee $employee)
     {
         return $employee;

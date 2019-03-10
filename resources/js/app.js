@@ -15,6 +15,24 @@ window.Vue = require('vue');
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+Vue.mixin({
+    methods: {
+        fFormatDate(dt){
+            let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            let d = new Date(dt),
+                month = '' + d.getMonth(),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (day.length < 2) day = '0' + day;
+
+            return [day, months[month], year].join(' ');
+        }
+    }
+
+});
+
+
 
 Vue.component('designation', require('./components/admin/DesignationListComponent.vue').default);
 Vue.component('department', require('./components/admin/DepartmentListComponent.vue').default);

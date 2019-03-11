@@ -14,15 +14,19 @@ Steps:<br>
 4. Run the command 'php artisan key:generate'<br>
 5. Run the command 'php artisan migrate --seed'<br>
 6. Change the APP_URL in .env file and add the MIX_APP_URL="${APP_URL}" after the APP_URL<br>
-7. Access the project and login
+7. Access the project and login<br>
 
-Admin login URL: your project/admin/login
-Admin Username: admin
-Admin Password: 111111
+Admin login URL: your project/admin/login<br>
+Admin Username: admin<br>
+Admin Password: 111111<br>
 
-Employee Username: employee
-Employee Password: 111111
+Employee Username: employee<br>
+Employee Password: 111111<br>
 
 
+Demo Project:<br>
+Admin URL: https://www.em.rosherhat.com/admin/login<br>
+Employee URL: https://www.em.rosherhat.com<br>
+You can use the previous username and password to login.
 
 

@@ -136,7 +136,7 @@
         },
 
         methods: {
-
+            // Show type modal method
             showTypeModal(){
                 this.showModal=true;
                 this.typeName = '';
@@ -146,6 +146,7 @@
                 this.errors = [];
             },
 
+            // Add leave type method
             addLeaveType(){
                 axios.post(process.env.MIX_APP_URL+'admin/leave-types',{
                     typeName: this.typeName,
@@ -166,6 +167,7 @@
 
             },
 
+            // Edit leave type method
             editLeaveType(id){
                 axios.get(process.env.MIX_APP_URL+'admin/leave-types/'+id+'/edit').then(response => {
                     this.showModal = true;
@@ -180,6 +182,7 @@
                 });
             },
 
+            // Update leave type method
             updateLeaveType(id){
                 axios.put(process.env.MIX_APP_URL+'admin/leave-types/'+id,{
                     typeName: this.typeName,
@@ -201,6 +204,7 @@
                 });
             },
 
+            // Delete leave type method
             deleteLeaveType(id){
                 if (confirm("Do you want to delete this record?")){
                     axios.delete(process.env.MIX_APP_URL+'admin/leave-types/'+id).then(response => {
@@ -221,7 +225,7 @@
         },
 
         mounted(){
-            console.log('Leave Type mounted!', process.env.MIX_APP_URL);
+            console.log('Leave Type mounted!');
         }
     }
 </script>

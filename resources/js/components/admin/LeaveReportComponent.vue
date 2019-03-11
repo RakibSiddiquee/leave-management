@@ -74,19 +74,23 @@
         },
 
         methods: {
+            // Get current year method
             getCurrentYear() {
                 return new Date().getFullYear();
             },
 
+            // Get months method
             getMonths() {
                 return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             },
 
+            // Get total leave method
             getTotal(leaves){
                 let total = 0;
                 return leaves.reduce(function(total, item){ return total + Number(item.total_days) }, 0);
             },
 
+            // Show report method
             showReport(){
                 axios.post(process.env.MIX_APP_URL + 'admin/leaves/filter-report', {
                     year: this.year,
@@ -107,7 +111,7 @@
 
 
         mounted(){
-            console.log('Leave report mounted!', this.month);
+            console.log('Leave report mounted!');
         }
     }
 </script>

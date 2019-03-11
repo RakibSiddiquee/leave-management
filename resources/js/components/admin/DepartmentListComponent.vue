@@ -125,7 +125,7 @@
         },
 
         methods: {
-
+            // Department modal show method
             showDeptModal(){
                 this.showModal=true;
                 this.departmentName = '';
@@ -134,6 +134,7 @@
                 this.errors = [];
             },
 
+            // Department insert method
             addDepartment(){
                 axios.post(process.env.MIX_APP_URL+'admin/departments',{
                     departmentName: this.departmentName,
@@ -152,6 +153,7 @@
 
             },
 
+            // Department edit method
             editDepartment(id){
                 axios.get(process.env.MIX_APP_URL+'admin/departments/'+id+'/edit').then(response => {
                     this.showModal = true;
@@ -165,6 +167,7 @@
                 });
             },
 
+            // Department update method
             updateDepartment(id){
                 axios.put(process.env.MIX_APP_URL+'admin/departments/'+id,{
                     departmentName: this.departmentName,
@@ -184,6 +187,7 @@
                 });
             },
 
+            // Department delete method
             deleteDepartment(id){
                 if (confirm("Do you want to delete this record?")){
                     axios.delete(process.env.MIX_APP_URL+'admin/departments/'+id).then(response => {
@@ -205,7 +209,7 @@
 
 
         mounted(){
-            console.log('Department mounted!', process.env.MIX_APP_URL);
+            console.log('Department mounted!');
         }
     }
 </script>

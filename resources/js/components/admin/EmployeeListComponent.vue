@@ -254,7 +254,7 @@
         },
 
         methods: {
-
+            // Employee show modal method
             showEmployeeModal(){
                 this.showModal=true;
                 this.updateBtn = false;
@@ -263,6 +263,7 @@
                 this.name = this.designation = this.department = this.username = this.contactNumber = this.email = this.password = this.password_confirmation = this.address = this.status = '';
             },
 
+            // Employee insert method
             addEmployee(){
                 axios.post(process.env.MIX_APP_URL+'admin/employees',{
                     name: this.name,
@@ -289,6 +290,7 @@
 
             },
 
+            // Employee status change method
             statusChange(id,status){
                 if (confirm("Do you want to "+(status==1?'Inactive':'active')+" the employee?")) {
                     axios.post(process.env.MIX_APP_URL + 'admin/employees/change-status', {
@@ -334,6 +336,7 @@
                 });
             },
 
+            // Employee edit method
             editEmployee(id){
                 axios.get(process.env.MIX_APP_URL+'admin/employees/'+id+'/edit').then(response => {
                     this.showModal = true;
@@ -353,6 +356,7 @@
                 });
             },
 
+            // Employee update method
             updateEmployee(id){
                 axios.put(process.env.MIX_APP_URL+'admin/employees/'+id,{
                     name: this.name,
@@ -378,6 +382,7 @@
                 });
             },
 
+            // Employee delete method
             deleteEmployee(id){
                 if (confirm("Do you want to delete the employee?")){
                     axios.delete(process.env.MIX_APP_URL+'admin/employees/'+id).then(response => {
@@ -399,7 +404,7 @@
 
 
         mounted(){
-            console.log('Employee mounted!', process.env.MIX_APP_URL);
+            console.log('Employee mounted!');
         }
     }
 </script>

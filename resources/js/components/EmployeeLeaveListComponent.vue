@@ -190,7 +190,7 @@
         },
 
         methods: {
-
+            // Show leave modal
             showLeaveModal(){
                 this.showModal=true;
                 this.errors = [];
@@ -198,10 +198,9 @@
                 this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
             },
 
+            // Add leave method
             addLeave(){
-
                 axios.post(process.env.MIX_APP_URL+'employee/leaves',{
-
                     leaveType: this.leaveType,
                     dateFrom: this.dateFrom,
                     dateTo: this.dateTo,
@@ -225,16 +224,11 @@
 
             },
 
+            // Show leave method
             showLeave(id){
                 axios.get(process.env.MIX_APP_URL+'employee/leaves/'+id).then(response => {
                     this.showLeaveDetailsModal = true;
                     this.leaveDetails = response.data;
-//                    this.id = response.data.id;
-//                    this.leaveType = response.data.type_id;
-//                    this.dateFrom = response.data.date_from;
-//                    this.dateTo = response.data.date_to;
-//                    this.totalDays = response.data.total_days;
-//                    this.details = response.data.details;
                 }).catch(error => {
                     console.error(error)
                 });
@@ -245,7 +239,7 @@
 
 
         mounted(){
-            console.log('Leave mounted!', this.leaves);
+            console.log('Leave mounted!');
         }
     }
 </script>

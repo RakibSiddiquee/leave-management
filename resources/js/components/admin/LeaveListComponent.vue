@@ -218,7 +218,7 @@
         },
 
         methods: {
-
+            // show leave modal method
             showLeaveModal(){
                 this.showModal=true;
                 this.updateBtn = false;
@@ -227,6 +227,7 @@
                 this.leaveType = this.dateFrom = this.dateTo = this.totalDays = this.details = '';
             },
 
+            // Add leave method
             addLeave(){
 
                 axios.post(process.env.MIX_APP_URL+'admin/leaves',{
@@ -254,6 +255,7 @@
 
             },
 
+            // Edit leave method
             editLeave(id){
                 axios.get(process.env.MIX_APP_URL+'admin/leaves/'+id+'/edit').then(response => {
                     this.showModal = true;
@@ -272,6 +274,7 @@
                 });
             },
 
+            // Update leave method
             updateLeave(id,empId){
                 axios.put(process.env.MIX_APP_URL+'admin/leaves/'+id,{
                     empId: empId,
@@ -296,6 +299,7 @@
                 });
             },
 
+            // Show leave method
             showLeave(id){
                 axios.get(process.env.MIX_APP_URL+'admin/leaves/'+id).then(response => {
                     this.showLeaveDetailsModal = true;
@@ -306,6 +310,7 @@
 
             },
 
+            // Change leave status method
             statusChange(id,sts){
                 if (confirm("Do you want to "+(sts==1?'approve':'reject')+" the leave?")) {
                     axios.post(process.env.MIX_APP_URL + 'admin/leaves/change-status', {
@@ -325,6 +330,7 @@
                 }
             },
 
+            // Search leave method
             leaveSearch(){
                 axios.post(process.env.MIX_APP_URL + 'admin/leaves/search-leave', {
                     name: this.empName,
@@ -346,7 +352,7 @@
 
 
         mounted(){
-            console.log('Leave mounted!', this.leaves);
+            console.log('Leave mounted!');
         }
     }
 </script>

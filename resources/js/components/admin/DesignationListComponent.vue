@@ -126,6 +126,7 @@
 
         methods: {
 
+            // Designation show modal method
             showDesgModal(){
                 this.showModal=true;
                 this.designationName = '';
@@ -134,6 +135,7 @@
                 this.errors = [];
             },
 
+            // Designation insert method
             addDesignation(){
                 axios.post(process.env.MIX_APP_URL+'admin/designations',{
                     designationName: this.designationName,
@@ -152,6 +154,7 @@
 
             },
 
+            // Designation edit method
             editDesignation(id){
                 axios.get(process.env.MIX_APP_URL+'admin/designations/'+id+'/edit').then(response => {
                     this.showModal = true;
@@ -165,6 +168,7 @@
                 });
             },
 
+            // Designation update method
             updateDesignation(id){
                 axios.put(process.env.MIX_APP_URL+'admin/designations/'+id,{
                     designationName: this.designationName,
@@ -184,6 +188,7 @@
                 });
             },
 
+            // Designation delete method
             deleteDesignation(id){
                 if (confirm("Do you want to delete this record?")){
                     axios.delete(process.env.MIX_APP_URL+'admin/designations/'+id).then(response => {
@@ -204,7 +209,7 @@
         },
 
         mounted(){
-            console.log('Designation mounted!', process.env.MIX_APP_URL);
+            console.log('Designation mounted!');
         }
     }
 </script>

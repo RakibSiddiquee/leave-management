@@ -237,6 +237,7 @@
 
         methods: {
 
+            // Admin modal show method
             showAdminModal(){
                 this.showModal=true;
                 this.updateBtn = false;
@@ -245,6 +246,7 @@
                 this.name = this.username = this.role = this.email = this.password = this.password_confirmation = this.address = this.status = '';
             },
 
+            // Admin insert method
             addAdmin(){
                 axios.post(process.env.MIX_APP_URL+'admin/admins',{
                     name: this.name,
@@ -269,6 +271,7 @@
 
             },
 
+            // Admin status change method
             statusChange(id,status){
                 if (confirm("Do you want to "+(status==1?'Inactive':'active')+" the admin?")) {
                     axios.post(process.env.MIX_APP_URL + 'admin/admins/change-status', {
@@ -288,6 +291,7 @@
                 }
             },
 
+            // Admin edit method
             editAdmin(id){
                 axios.get(process.env.MIX_APP_URL+'admin/admins/'+id+'/edit').then(response => {
                     this.showModal = true;
@@ -331,6 +335,7 @@
                 });
             },
 
+            // Admin update method
             updateAdmin(id){
                 axios.put(process.env.MIX_APP_URL+'admin/admins/'+id,{
                     name: this.name,
@@ -352,6 +357,7 @@
                 });
             },
 
+            // Admin delete method
             deleteAdmin(id){
                 if (confirm("Do you want to delete the admin?")){
                     axios.delete(process.env.MIX_APP_URL+'admin/admins/'+id).then(response => {
@@ -371,9 +377,8 @@
 
         },
 
-
         mounted(){
-            console.log('Admin mounted!', process.env.MIX_APP_URL);
+            console.log('Admin mounted!');
         }
     }
 </script>

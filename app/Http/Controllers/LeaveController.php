@@ -133,7 +133,7 @@ class LeaveController extends Controller
             }
         }
 
-        $leave = Leave::with('type')->find($id);
+        $leave = Leave::with('type', 'employee')->find($id);
         $leave->emp_id = $request->empId;
         $leave->type_id = $request->leaveType;
         $leave->date_from = $request->dateFrom;

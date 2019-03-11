@@ -9,8 +9,10 @@ NodeJs<br><br>
 
 Steps:<br><br>
 1. Clone or download the project<br>
-2. Create the .env file and change the database credentials<br>
-3. Run the command 'php artisan migrate:refresh --seed'<br>
+2. Run Composer update
+2. Create the .env file by copying the .env.example file and change the database credentials<br>
+3. Run the command 'php artisan key:generate --seed'<br>
+3. Run the command 'php artisan migrate --seed'<br>
 3. Change the APP_URL in .env file and add the MIX_APP_URL="${APP_URL}" after the APP_URL<br>
 4. Run the command 'npm install'<br>
 5. Run the command 'npm run prod or dev'<br>

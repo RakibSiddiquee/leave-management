@@ -1937,6 +1937,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['lvs', 'leaveTypes'],
   data: function data() {
@@ -1955,7 +1971,11 @@ __webpack_require__.r(__webpack_exports__);
       dateFrom: '',
       dateTo: '',
       totalDays: '',
-      details: ''
+      details: '',
+      empName: '',
+      searchDateFrom: '',
+      searchDateTo: '',
+      searchLeaveType: ''
     };
   },
   methods: {
@@ -2052,8 +2072,6 @@ __webpack_require__.r(__webpack_exports__);
     statusChange: function statusChange(id, sts) {
       var _this5 = this;
 
-      console.log(id, sts);
-
       if (confirm("Do you want to " + (sts == 1 ? 'approve' : 'reject') + " the leave?")) {
         axios.post("http://localhost:9000/axil/public/" + 'admin/leaves/change-status', {
           id: id,
@@ -2071,10 +2089,140 @@ __webpack_require__.r(__webpack_exports__);
           }
         });
       }
+    },
+    leaveSearch: function leaveSearch() {
+      var _this6 = this;
+
+      axios.post("http://localhost:9000/axil/public/" + 'admin/leaves/search-leave', {
+        name: this.empName,
+        dateFrom: this.searchDateFrom,
+        dateTo: this.searchDateTo,
+        type: this.searchLeaveType
+      }).then(function (response) {
+        _this6.leaves = response.data;
+        console.log(response.data);
+      }).catch(function (e) {
+        if (e.response.status == 422) {
+          console.log(e);
+        }
+      });
     }
   },
   mounted: function mounted() {
     console.log('Leave mounted!', this.leaves);
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['emps'],
+  data: function data() {
+    return {
+      employees: this.emps,
+      year: this.getCurrentYear(),
+      month: new Date().getMonth()
+    };
+  },
+  methods: {
+    getCurrentYear: function getCurrentYear() {
+      return new Date().getFullYear();
+    },
+    getCurrentMonth: function getCurrentMonth() {
+      return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "Octber", "November", "December"];
+    },
+    total: function total(leaves) {
+      return leaves.reduce(function (total, item) {
+        return total + item.total_days;
+      }, 0);
+    },
+    showReport: function showReport() {
+      var _this = this;
+
+      axios.post("http://localhost:9000/axil/public/" + 'admin/leaves/filter-report', {
+        year: this.year,
+        month: this.month
+      }).then(function (response) {
+        _this.employees = response.data;
+      }).catch(function (e) {
+        if (e.response.status == 422) {
+          console.log(e);
+        }
+      });
+    }
+  },
+  mounted: function mounted() {
+    console.log('Leave report mounted!', this.month);
   }
 });
 
@@ -38753,10 +38901,129 @@ var render = function() {
                 "a",
                 {
                   staticClass: "btn btn-primary btn-sm pull-right",
+                  staticStyle: { "margin-left": "5px" },
                   on: { click: _vm.showLeaveModal }
                 },
                 [_c("i", { staticClass: "fa fa-plus" })]
-              )
+              ),
+              _vm._v(" "),
+              _c("form", { staticClass: "pull-right form-inline" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.empName,
+                      expression: "empName"
+                    }
+                  ],
+                  staticClass: "form-control input-sm",
+                  attrs: { type: "text", placeholder: "Employee name" },
+                  domProps: { value: _vm.empName },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.empName = $event.target.value
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.searchDateFrom,
+                      expression: "searchDateFrom"
+                    }
+                  ],
+                  staticClass: "form-control input-sm",
+                  attrs: { type: "date", placeholder: "Date From" },
+                  domProps: { value: _vm.searchDateFrom },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.searchDateFrom = $event.target.value
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.searchDateTo,
+                      expression: "searchDateTo"
+                    }
+                  ],
+                  staticClass: "form-control input-sm",
+                  attrs: { type: "date", placeholder: "Date To" },
+                  domProps: { value: _vm.searchDateTo },
+                  on: {
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.searchDateTo = $event.target.value
+                    }
+                  }
+                }),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.searchLeaveType,
+                        expression: "searchLeaveType"
+                      }
+                    ],
+                    staticClass: "form-control input-sm",
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.searchLeaveType = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      }
+                    }
+                  },
+                  [
+                    _c("option", { attrs: { value: "" } }, [
+                      _vm._v("Choose type")
+                    ]),
+                    _vm._v(" "),
+                    _vm._l(_vm.types, function(type) {
+                      return _c(
+                        "option",
+                        { key: type.id, domProps: { value: type.id } },
+                        [_vm._v(_vm._s(type.type_name))]
+                      )
+                    })
+                  ],
+                  2
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  staticClass: "btn btn-success btn-sm",
+                  attrs: { type: "button", value: "Search" },
+                  on: { click: _vm.leaveSearch }
+                })
+              ])
             ]),
             _vm._v(" "),
             _c("table", { staticClass: "table table-bordered" }, [
@@ -38767,6 +39034,10 @@ var render = function() {
                 _vm._l(_vm.leaves, function(leave, index) {
                   return _c("tr", { key: leave.id }, [
                     _c("td", [_vm._v(_vm._s(index + 1))]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _vm._v(_vm._s(leave.employee ? leave.employee.name : ""))
+                    ]),
                     _vm._v(" "),
                     _c("td", [
                       _vm._v(_vm._s(leave.type ? leave.type.type_name : ""))
@@ -39217,7 +39488,12 @@ var render = function() {
                       _vm.leaveDetails.type
                         ? _vm.leaveDetails.type.type_name
                         : ""
-                    )
+                    ) +
+                      _vm._s(
+                        _vm.leaveDetails.employee
+                          ? " of " + _vm.leaveDetails.employee.name
+                          : ""
+                      )
                   )
                 ])
               ]),
@@ -39312,6 +39588,8 @@ var staticRenderFns = [
       _c("tr", [
         _c("th", [_vm._v("#")]),
         _vm._v(" "),
+        _c("th", [_vm._v("Name")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Leave Type")]),
         _vm._v(" "),
         _c("th", [_vm._v("Date From")]),
@@ -39364,6 +39642,180 @@ var staticRenderFns = [
         _c("span", { staticClass: "required" }, [_vm._v("*")])
       ]
     )
+  }
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=template&id=0114a206&":
+/*!*****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=template&id=0114a206& ***!
+  \*****************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _vm._m(0),
+    _vm._v(" "),
+    _c("section", { staticClass: "content" }, [
+      _c("div", { staticClass: "row" }, [
+        _c("div", { staticClass: "col-md-12" }, [
+          _c("div", { staticClass: "box box-info" }, [
+            _c("div", { staticClass: "box-header with-border" }, [
+              _c("h3", { staticClass: "box-title" }, [
+                _vm._v("List of Leave Report")
+              ]),
+              _vm._v(" "),
+              _c("form", { staticClass: "pull-right form-inline" }, [
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.year,
+                        expression: "year"
+                      }
+                    ],
+                    staticClass: "form-control input-sm",
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.year = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      }
+                    }
+                  },
+                  _vm._l(_vm.getCurrentYear(), function(yr) {
+                    return yr >= 2010
+                      ? _c("option", { domProps: { value: yr } }, [
+                          _vm._v(_vm._s(yr))
+                        ])
+                      : _vm._e()
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _c(
+                  "select",
+                  {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.month,
+                        expression: "month"
+                      }
+                    ],
+                    staticClass: "form-control input-sm",
+                    on: {
+                      change: function($event) {
+                        var $$selectedVal = Array.prototype.filter
+                          .call($event.target.options, function(o) {
+                            return o.selected
+                          })
+                          .map(function(o) {
+                            var val = "_value" in o ? o._value : o.value
+                            return val
+                          })
+                        _vm.month = $event.target.multiple
+                          ? $$selectedVal
+                          : $$selectedVal[0]
+                      }
+                    }
+                  },
+                  _vm._l(_vm.getCurrentMonth(), function(mn, index) {
+                    return _c("option", { domProps: { value: index } }, [
+                      _vm._v(_vm._s(mn))
+                    ])
+                  }),
+                  0
+                ),
+                _vm._v(" "),
+                _c("input", {
+                  staticClass: "btn btn-success btn-sm",
+                  attrs: { type: "button", value: "Show Report" },
+                  on: { click: _vm.showReport }
+                })
+              ])
+            ]),
+            _vm._v(" "),
+            _c("table", { staticClass: "table table-bordered" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c(
+                "tbody",
+                _vm._l(_vm.employees, function(employee, index) {
+                  return _c("tr", { key: employee.id }, [
+                    _c("td", [_vm._v(_vm._s(index + 1))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(employee.name))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(_vm.total(employee.leaves)))])
+                  ])
+                }),
+                0
+              )
+            ])
+          ])
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("section", { staticClass: "content-header" }, [
+      _c("h1", [_vm._v("Leave Report")]),
+      _vm._v(" "),
+      _c("ol", { staticClass: "breadcrumb" }, [
+        _c("li", [
+          _c("a", { attrs: { href: "#" } }, [
+            _c("i", { staticClass: "fa fa-dashboard" }),
+            _vm._v(" Home")
+          ])
+        ]),
+        _vm._v(" "),
+        _c("li", { staticClass: "active" }, [_vm._v("Leave Report")])
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("#")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Employee Name")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Total Leave")])
+      ])
+    ])
   }
 ]
 render._withStripped = true
@@ -54790,6 +55242,7 @@ Vue.component('employee', __webpack_require__(/*! ./components/admin/EmployeeLis
 Vue.component('leave-type', __webpack_require__(/*! ./components/admin/LeaveTypeListComponent.vue */ "./resources/js/components/admin/LeaveTypeListComponent.vue").default);
 Vue.component('employee-leave', __webpack_require__(/*! ./components/EmployeeLeaveListComponent.vue */ "./resources/js/components/EmployeeLeaveListComponent.vue").default);
 Vue.component('leave-list', __webpack_require__(/*! ./components/Admin/LeaveListComponent.vue */ "./resources/js/components/Admin/LeaveListComponent.vue").default);
+Vue.component('leave-report', __webpack_require__(/*! ./components/Admin/LeaveReportComponent.vue */ "./resources/js/components/Admin/LeaveReportComponent.vue").default);
 var app = new Vue({
   el: '#app'
 });
@@ -54918,6 +55371,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveListComponent_vue_vue_type_template_id_72472ed3___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveListComponent_vue_vue_type_template_id_72472ed3___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Admin/LeaveReportComponent.vue":
+/*!****************************************************************!*\
+  !*** ./resources/js/components/Admin/LeaveReportComponent.vue ***!
+  \****************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _LeaveReportComponent_vue_vue_type_template_id_0114a206___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LeaveReportComponent.vue?vue&type=template&id=0114a206& */ "./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=template&id=0114a206&");
+/* harmony import */ var _LeaveReportComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LeaveReportComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _LeaveReportComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _LeaveReportComponent_vue_vue_type_template_id_0114a206___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _LeaveReportComponent_vue_vue_type_template_id_0114a206___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Admin/LeaveReportComponent.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveReportComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./LeaveReportComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveReportComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=template&id=0114a206&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=template&id=0114a206& ***!
+  \***********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveReportComponent_vue_vue_type_template_id_0114a206___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./LeaveReportComponent.vue?vue&type=template&id=0114a206& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Admin/LeaveReportComponent.vue?vue&type=template&id=0114a206&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveReportComponent_vue_vue_type_template_id_0114a206___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LeaveReportComponent_vue_vue_type_template_id_0114a206___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

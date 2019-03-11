@@ -7,6 +7,7 @@ use App\Leave;
 use App\LeaveType;
 use App\Mail\AcceptOrRejectMail;
 use App\Mail\LeaveRequestMail;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -18,12 +19,47 @@ class LeaveController extends Controller
         $leaves = Leave::with('type');
 
         if (auth('employee')->check()) $leaves = $leaves->where('emp_id', auth('employee')->id());
+        if (auth('web')->check()) $leaves = $leaves->with('employee');
 
         $leaves = $leaves->orderBy('id', 'desc')->get();
 
         $view = auth('employee')->check() ? 'employee-leavelist' : 'admin.leave-list';
 
         return view($view, compact('leaveTypes', 'leaves'));
+    }
+
+    public function searchLeave(Request $request)
+    {
+        $leaves = Leave::with('type')->with('employee');
+
+        if ($request->name){
+            $employee = Employee::select('id', 'name')->where('name', 'like', "%$request->name%")->get();
+
+            if ($employee->count() > 1){
+                $ids = $employee->pluck('id');
+                $leaves = $leaves->whereIn('emp_id', $ids);
+            }else{
+                $id = $employee->pluck('id')[0];
+                $leaves = $leaves->where('emp_id', $id);
+            }
+        }
+
+        if($request->dateFrom && $request->dateTo){
+            $leaves = $leaves->where('date_from', '>=', $request->dateFrom)->where('date_to', '<=', $request->dateTo);
+        }elseif ($request->dateFrom){
+            $leaves = $leaves->where('date_from', $request->dateFrom);
+        }elseif ($request->dateTo){
+            $leaves = $leaves->where('date_to', $request->dateTo);
+        }
+
+        if ($request->type){
+            $leaves = $leaves->where('type_id', $request->type);
+        }
+
+        $leaves = $leaves->orderBy('id', 'desc')->get();
+
+        return $leaves;
+
     }
 
     public function store(Request $request)
@@ -57,7 +93,9 @@ class LeaveController extends Controller
 
         $leave = Leave::with('type')->find($leave->id);
 
-        Mail::to(auth('employee')->user()->email)->send(new LeaveRequestMail($leave, $totalDays));
+        $admin = User::where('role', 2)->first();
+
+        Mail::to($admin->email)->send(new LeaveRequestMail($leave, $totalDays));
 
         return $leave;
 
@@ -65,7 +103,7 @@ class LeaveController extends Controller
 
     public function show($id)
     {
-        $leave = Leave::with('type')->find($id);
+        $leave = Leave::with(['type', 'employee'])->find($id);
         return $leave;
     }
 
@@ -111,7 +149,7 @@ class LeaveController extends Controller
     {
 
         if (isset($request->id) && isset($request->status)){
-            $leave = Leave::with('type')->find($request->id);
+            $leave = Leave::with('type', 'employee')->find($request->id);
             $leave->status = $request->status;
             $leave->save();
 
@@ -121,6 +159,30 @@ class LeaveController extends Controller
 
             return $leave;
         }
+    }
+
+    public function leaveReport()
+    {
+        $yearMonth = date('Y-m').'%';
+
+        $employees = Employee::with(['leaves' => function ($query) use ($yearMonth) {
+            $query->where('date_from', 'like', $yearMonth)->where('status', 1);
+        }])->where('status', 1)->get();
+
+        return view('admin.leave-report', compact('employees'));
+    }
+
+    public function filterReport(){
+        $year = request()->year;
+        $month = request()->month+1;
+
+        $yearMonth = $year.'-'.($month < 10 ? '0'.$month : $month).'%';
+
+        $employees = Employee::with(['leaves' => function ($query) use ($yearMonth) {
+            $query->where('date_from', 'like', $yearMonth)->where('status', 1);
+        }])->where('status', 1)->get();
+
+        return $employees;
     }
 
 

@@ -23,14 +23,29 @@
                                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                                 <strong>Success!</strong> {{ successMsg }}
                             </div>
-                            <!--<a class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#leaveModal" @click="showLeaveModal"><i class="fa fa-plus"></i></a>-->
-                            <a class="btn btn-primary btn-sm pull-right" @click="showLeaveModal"><i class="fa fa-plus"></i></a>
+
+                            <a class="btn btn-primary btn-sm pull-right" @click="showLeaveModal" style="margin-left: 5px;"><i class="fa fa-plus"></i></a>
+
+                            <form class="pull-right form-inline">
+                                <input type="text" v-model="empName" class="form-control input-sm" placeholder="Employee name">
+                                <input type="date" v-model="searchDateFrom" class="form-control input-sm" placeholder="Date From">
+                                <input type="date" v-model="searchDateTo" class="form-control input-sm" placeholder="Date To">
+
+                                <select class="form-control input-sm" v-model="searchLeaveType">
+                                    <option value="">Choose type</option>
+                                    <option v-for="type in types" :value="type.id" :key="type.id">{{ type.type_name }}</option>
+                                </select>
+
+                                <input @click="leaveSearch" type="button" value="Search" class="btn btn-success btn-sm">
+                            </form>
+
                         </div>
                         <!-- /.box-header -->
                         <table class="table table-bordered">
                             <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Name</th>
                                 <th>Leave Type</th>
                                 <th>Date From</th>
                                 <th>Date To</th>
@@ -43,6 +58,7 @@
 
                             <tr v-for="(leave,index) in leaves" :key="leave.id">
                                 <td>{{ index+1 }}</td>
+                                <td>{{ leave.employee ? leave.employee.name : '' }}</td>
                                 <td>{{ leave.type ? leave.type.type_name : '' }}</td>
                                 <td>{{ fFormatDate(leave.date_from) }}</td>
                                 <td>{{ fFormatDate(leave.date_to) }}</td>
@@ -143,7 +159,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" @click="showLeaveDetailsModal=false">&times;</button>
-                            <h4 class="modal-title">{{ leaveDetails.type ? leaveDetails.type.type_name : '' }}</h4>
+                            <h4 class="modal-title">{{ leaveDetails.type ? leaveDetails.type.type_name : '' }}{{ leaveDetails.employee ? ' of '+leaveDetails.employee.name : '' }}</h4>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -194,6 +210,10 @@
                 dateTo: '',
                 totalDays: '',
                 details: '',
+                empName: '',
+                searchDateFrom: '',
+                searchDateTo: '',
+                searchLeaveType: '',
             }
         },
 
@@ -287,7 +307,6 @@
             },
 
             statusChange(id,sts){
-                console.log(id,sts);
                 if (confirm("Do you want to "+(sts==1?'approve':'reject')+" the leave?")) {
                     axios.post(process.env.MIX_APP_URL + 'admin/leaves/change-status', {
                         id: id,
@@ -305,6 +324,22 @@
                     });
                 }
             },
+
+            leaveSearch(){
+                axios.post(process.env.MIX_APP_URL + 'admin/leaves/search-leave', {
+                    name: this.empName,
+                    dateFrom: this.searchDateFrom,
+                    dateTo: this.searchDateTo,
+                    type: this.searchLeaveType,
+                }).then(response => {
+                    this.leaves = response.data;
+                    console.log(response.data);
+                }).catch(e => {
+                    if (e.response.status == 422) {
+                        console.log(e);
+                    }
+                });
+            }
 
 
         },

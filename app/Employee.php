@@ -13,4 +13,8 @@ class Employee extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public function leaves(){
+        return $this->hasMany('App\Leave', 'emp_id', 'id');
+    }
 }

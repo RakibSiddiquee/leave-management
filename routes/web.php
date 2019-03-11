@@ -20,7 +20,10 @@ Route::prefix('admin')->name('admin.')->group(function (){
         Route::resource('employees', 'Admin\EmployeeController')->except(['create', 'show']);
 
         Route::resource('leave-types', 'Admin\LeaveTypeController')->except(['create', 'show']);
+        Route::get('/leaves/leave-reports', 'LeaveController@leaveReport')->name('report');
+        Route::post('/leaves/filter-report', 'LeaveController@filterReport');
         Route::post('/leaves/change-status', 'LeaveController@changeStatus');
+        Route::post('/leaves/search-leave', 'LeaveController@searchLeave');
         Route::resource('/leaves', 'LeaveController');
     });
 
@@ -35,8 +38,6 @@ Route::prefix('employee')->name('employee.')->group(function (){
     Route::post('/logout', 'Employee\Auth\LoginController@logout')->name('logout');
 
     Route::middleware(['auth:employee'])->group(function (){
-
-        Route::get('/dashboard', 'Employee\DashboardController@index')->name('dashboard');
         Route::resource('/leaves', 'LeaveController');
 
     });

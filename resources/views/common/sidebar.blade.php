@@ -16,6 +16,7 @@
 
         <li><a href="{{ auth('employee')->check() ? route('employee.leaves.index') : route('admin.leaves.index') }}"><i class="fa fa-file-o"></i> Leave</a></li>
         @if(auth('web')->check())
+          <li><a href="{{ route('admin.report') }}"><i class="fa fa-file-o"></i> Report</a></li>
           <li><a href="{{ route('admin.employees.index') }}"><i class="fa fa-file-o"></i> Employee</a></li>
           <li><a href="{{ route('admin.designations.index') }}"><i class="fa fa-plus-square"></i> Designation</a></li>
           <li><a href="{{ route('admin.departments.index') }}"><i class="fa fa-file-o"></i> Department</a></li>

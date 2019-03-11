@@ -21,14 +21,14 @@
         <!-- small box -->
         <div class="small-box bg-aqua">
           <div class="inner">
-            <h3>100</h3>
+            <h3>{{ $totalEmployee }}</h3>
 
             <p>Total Employee</p>
           </div>
           <div class="icon">
-            <i class="ion ion-bag"></i>
+            <i class="ion ion-person"></i>
           </div>
-          <a href="{{ url('/backend/bn-contents') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="{{ route('admin.employees.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -36,14 +36,14 @@
         <!-- small box -->
         <div class="small-box bg-green">
           <div class="inner">
-            <h3>100<sup style="font-size: 20px"></sup></h3>
+            <h3>{{ $totalLeave }}<sup style="font-size: 20px"></sup></h3>
 
             <p>Total Leave</p>
           </div>
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
           </div>
-          <a href="{{ url('/backend/bn-categories') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="{{ route('admin.leaves.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -51,14 +51,14 @@
         <!-- small box -->
         <div class="small-box bg-yellow">
           <div class="inner">
-            <h3>100</h3>
+            <h3>{{ $totalAdmin }}</h3>
 
             <p>Total Admins</p>
           </div>
           <div class="icon">
-            <i class="ion ion-person-add"></i>
+            <i class="ion ion-person"></i>
           </div>
-          <a href="{{ url('/backend/bn-authors') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="{{ route('admin.admins.index') }}" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->

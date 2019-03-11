@@ -41,8 +41,9 @@ Vue.component('employee', require('./components/admin/EmployeeListComponent.vue'
 Vue.component('leave-type', require('./components/admin/LeaveTypeListComponent.vue').default);
 Vue.component('employee-leave', require('./components/EmployeeLeaveListComponent.vue').default);
 Vue.component('leave-list', require('./components/Admin/LeaveListComponent.vue').default);
+Vue.component('leave-report', require('./components/Admin/LeaveReportComponent.vue').default);
 
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
 });

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Employee;
 use App\Http\Controllers\Controller;
+use App\Leave;
+use App\User;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -24,6 +27,9 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('dashboard');
+        $totalEmployee = Employee::where('status', 1)->count();
+        $totalLeave = Leave::count();
+        $totalAdmin = User::where('status', 1)->count();
+        return view('dashboard', compact('totalEmployee', 'totalLeave', 'totalAdmin'));
     }
 }

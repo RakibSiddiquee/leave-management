@@ -18,14 +18,14 @@
                     <!-- Horizontal Form -->
                     <div class="box box-info">
                         <div class="box-header with-border">
-                            <h3 class="box-title">List of Leave Report</h3>
+                            <h3 class="box-title">Leave Report of {{ getMonths()[monthNo] }}</h3>
 
                             <form class="pull-right form-inline">
                                 <select v-model="year" class="form-control input-sm">
                                     <option v-for="yr in getCurrentYear()" v-if="yr >= 2010" :value="yr">{{ yr }}</option>
                                 </select>
                                 <select v-model="month" class="form-control input-sm">
-                                    <option v-for="(mn,index) in getCurrentMonth()" :value="index">{{ mn }}</option>
+                                    <option v-for="(mn,index) in getMonths()" :value="index">{{ mn }}</option>
                                 </select>
 
                                 <input @click="showReport" type="button" value="Show Report" class="btn btn-success btn-sm">
@@ -45,7 +45,7 @@
                             <tr v-for="(employee,index) in employees" :key="employee.id">
                                 <td>{{ index+1 }}</td>
                                 <td>{{ employee.name }}</td>
-                                <td>{{ total(employee.leaves) }}</td>
+                                <td>{{ getTotal(employee.leaves) }}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -69,6 +69,7 @@
                 employees: this.emps,
                 year: this.getCurrentYear(),
                 month: new Date().getMonth(),
+                monthNo: new Date().getMonth()
             }
         },
 
@@ -77,12 +78,13 @@
                 return new Date().getFullYear();
             },
 
-            getCurrentMonth() {
-                return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "Octber", "November", "December"];
+            getMonths() {
+                return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             },
 
-            total(leaves){
-                return Number(leaves.reduce((total, item) => total + item.total_days, 0));
+            getTotal(leaves){
+                let total = 0;
+                return leaves.reduce(function(total, item){ return total + Number(item.total_days) }, 0);
             },
 
             showReport(){
@@ -91,6 +93,7 @@
                     month: this.month,
                 }).then(response => {
                     this.employees = response.data;
+                    this.monthNo = this.month;
                 }).catch(e => {
                     if (e.response.status == 422) {
                         console.log(e);

@@ -97,4 +97,15 @@ class EmployeeController extends Controller
 
         if ($status) return 'ok';
     }
+
+    public function changePassword(Request $request){
+        $this->validate($request, [
+            'newPassword' => 'required|min:6',
+            'confirmPassword' => 'required|same:newPassword',
+        ]);
+
+        Employee::where('id', $request->id)->update(['password' => bcrypt($request->newPassword)]);
+
+        return 'success';
+    }
 }

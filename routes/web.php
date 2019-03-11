@@ -14,9 +14,11 @@ Route::prefix('admin')->name('admin.')->group(function (){
         Route::resource('departments', 'Admin\DepartmentController')->except(['create', 'show']);
 
         Route::post('/admins/change-status', 'Admin\AdminController@changeStatus');
+        Route::post('/admins/change-password', 'Admin\AdminController@changePassword');
         Route::resource('admins', 'Admin\AdminController')->except(['create', 'show']);
 
         Route::post('/employees/change-status', 'Admin\EmployeeController@changeStatus');
+        Route::post('/employees/change-password', 'Admin\EmployeeController@changePassword');
         Route::resource('employees', 'Admin\EmployeeController')->except(['create', 'show']);
 
         Route::resource('leave-types', 'Admin\LeaveTypeController')->except(['create', 'show']);

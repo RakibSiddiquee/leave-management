@@ -23,7 +23,7 @@
                                 <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                                 <strong>Success!</strong> {{ successMsg }}
                             </div>
-                            <!--<a class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#deptModal" @click="showAdminModal"><i class="fa fa-plus"></i></a>-->
+                            <!--<a class="btn btn-primary btn-sm pull-right" data-toggle="modal" data-target="#adminModal" @click="showAdminModal"><i class="fa fa-plus"></i></a>-->
                             <a class="btn btn-primary btn-sm pull-right" @click="showAdminModal"><i class="fa fa-plus"></i></a>
                         </div>
                         <!-- /.box-header -->
@@ -59,6 +59,10 @@
                                         <i class="fa fa-pencil"></i>
                                     </a>
 
+                                    <a class="btn btn-warning btn-xs" @click="getChangePassword(admin.id)" title="Edit the user">
+                                        <i class="fa fa-lock"></i>
+                                    </a>
+
                                     <a class="btn btn-danger btn-xs" @click="deleteAdmin(admin.id)" title="Delete the user">
                                         <i class="fa fa-times"></i>
                                     </a>
@@ -72,7 +76,7 @@
             <!-- /.row -->
 
             <!-- Add Admin modal -->
-            <div class="modal fade" :class="{ 'in show': showModal }" id="deptModal" role="dialog">
+            <div class="modal fade" :class="{ 'in show': showModal }" id="adminModal" role="dialog">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -156,6 +160,47 @@
                 </div>
             </div>
 
+            <!-- Add Admin Password Change modal -->
+            <div class="modal fade" :class="{ 'in show': changePasswordModal }" role="dialog">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" @click="changePasswordModal=false">&times;</button>
+                            <h4 class="modal-title">Password Change</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form @submit.prevent="onSubmit" method="post" enctype="multipart/form-data" class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">New Password <span class="required">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input type="password" v-model="newPassword" class="form-control" placeholder="Password">
+                                        <span v-if="errors.length && errors[0].newPassword" class="text-danger">{{ errors[0].newPassword[0] }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Confirm Password <span class="required">*</span></label>
+                                    <div class="col-sm-8">
+                                        <input type="password" v-model="confirmPassword" class="form-control" placeholder="Confirm Password">
+                                        <span v-if="errors.length && errors[0].confirmPassword" class="text-danger">{{ errors[0].confirmPassword[0] }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-offset-3 col-sm-8">
+                                        <button type="button" @click="changePassword(id)" class="btn btn-info" data-dismiss="modal">Update</button>
+                                        <button type="reset" class="btn btn-default">Clear</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" @click="changePasswordModal=false">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </section>
 
     <!-- /.content -->
@@ -171,6 +216,7 @@
             return {
                 admins: this.admns,
                 showModal: false,
+                changePasswordModal: false,
                 id: '',
                 errors: [],
                 successMsg: '',
@@ -183,6 +229,8 @@
                 password_confirmation: '',
                 address: '',
                 status: '',
+                newPassword: '',
+                confirmPassword: '',
 
             }
         },
@@ -254,6 +302,32 @@
                     this.address = response.data.address;
                 }).catch(error => {
                     console.error(error)
+                });
+            },
+
+            // Show change password form
+            getChangePassword(id){
+                this.id = '';
+                this.id = id;
+                this.errors = [];
+                this.changePasswordModal = true;
+            },
+
+            // Update password method
+            changePassword(id){
+                axios.post(process.env.MIX_APP_URL+'admin/admins/change-password',{
+                    id: id,
+                    newPassword: this.newPassword,
+                    confirmPassword: this.confirmPassword
+                }).then(response => {
+                    this.changePasswordModal=false;
+                    this.successMsg = 'Admin password has been changed successfully!';
+                    this.id = this.newPassword = this.confirmPassword = '';
+                }).catch(e => {
+                    if (e.response.status == 422){
+                        this.errors = [];
+                        this.errors.push(e.response.data.errors);
+                    }
                 });
             },
 

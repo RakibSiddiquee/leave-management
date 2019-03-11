@@ -82,7 +82,7 @@
             },
 
             total(leaves){
-                return leaves.reduce((total, item) => total + item.total_days, 0);
+                return Number(leaves.reduce((total, item) => total + item.total_days, 0));
             },
 
             showReport(){

@@ -2202,9 +2202,9 @@ __webpack_require__.r(__webpack_exports__);
       return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "Octber", "November", "December"];
     },
     total: function total(leaves) {
-      return leaves.reduce(function (total, item) {
+      return Number(leaves.reduce(function (total, item) {
         return total + item.total_days;
-      }, 0);
+      }, 0));
     },
     showReport: function showReport() {
       var _this = this;

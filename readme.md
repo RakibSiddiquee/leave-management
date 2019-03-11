@@ -1,13 +1,13 @@
 <h1>Employee Leave Management System</h1>
 
 Dependencies:
-<br><br>
+<br>
 Laravel Version: 5.7.28 <br>
 PHP Version: PHP >= 7.1.3<br>
 VueJs Version: 2.5.17<br>
 NodeJs<br><br>
 
-Steps:<br><br>
+Steps:<br>
 1. Clone or download the project<br>
 2. Run Composer update
 2. Create the .env file by copying the .env.example file and change the database credentials<br>

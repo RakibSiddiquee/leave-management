@@ -8,7 +8,7 @@
       <ul class="sidebar-menu">
         @if(auth('web')->check())
           <li class="active treeview">
-            <a href="{{ url('/backend/dashboard') }}">
+            <a href="{{ route('admin.dashboard') }}">
               <i class="fa fa-dashboard"></i> <span>Dashboard</span>
             </a>
           </li>
